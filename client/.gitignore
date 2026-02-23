@@ -10,7 +10,10 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
-*.local
+# *.local
+
+# Environment variables
+# NOTE: In dev you requested env files be committed, so these are NOT ignored here.
 
 # Editor directories and files
 .vscode/*

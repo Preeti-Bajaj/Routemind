@@ -5,14 +5,12 @@ from routes.planner_routes import router as planner_router
 
 app = FastAPI()
 
-# Allow browser calls from the Vite dev server (preflight OPTIONS must succeed).
+# MVP / testing mode: allow all origins.
+# NOTE: Browsers do not allow allow_credentials=True with allow_origins=["*"].
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-    ],
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
