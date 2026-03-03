@@ -1,6 +1,8 @@
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { TranslationProvider } from './context/TranslationContext';
+import { VoiceNavigationProvider } from './context/VoiceNavigationContext';
+import PersistentVoiceButton from './components/PersistentVoiceButton';
 
 import Home from "./pages/Home";
 import MapPage from "./pages/MapPage";
@@ -27,44 +29,49 @@ export default function App() {
   return (
     <TranslationProvider>
       <Router>
-        <div className="min-h-screen bg-gray-100">
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/itineraryai" element={
-              <ProtectedRoute>
-              <Itinerary />
-              </ProtectedRoute>} />
-
-            <Route
-              path="/map"
-              element={
+        <VoiceNavigationProvider>
+          <div className="min-h-screen bg-gray-100">
+            <Routes>
+              <Route path="/" element={<Home />} />
+              <Route path="/signup" element={<SignUp />} />
+              <Route path="/signin" element={<SignIn />} />
+              <Route path="/itineraryai" element={
                 <ProtectedRoute>
-                  <MapPage />
-                </ProtectedRoute>
-              }
-            />
+                <Itinerary />
+                </ProtectedRoute>} />
 
-            <Route
-              path="/family-tracker"
-              element={
-                <ProtectedRoute>
-                  <FamilyTrackerPage />
-                </ProtectedRoute>
-              }
-            />
+              <Route
+                path="/map"
+                element={
+                  <ProtectedRoute>
+                    <MapPage />
+                  </ProtectedRoute>
+                }
+              />
 
-            <Route
-              path="/profile"
-              element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              }
-            />
-          </Routes>
-        </div>
+              <Route
+                path="/family-tracker"
+                element={
+                  <ProtectedRoute>
+                    <FamilyTrackerPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              <Route
+                path="/profile"
+                element={
+                  <ProtectedRoute>
+                    <Profile />
+                  </ProtectedRoute>
+                }
+              />
+            </Routes>
+            
+            {/* Persistent Voice Navigation Button */}
+            <PersistentVoiceButton />
+          </div>
+        </VoiceNavigationProvider>
       </Router>
     </TranslationProvider>
   );

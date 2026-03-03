@@ -1,9 +1,11 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
+import { IconMicrophone, IconMicrophoneOff } from '@tabler/icons-react';
 
 const AGENT_BASE = import.meta.env.VITE_AGENT_URL ?? "";
 import { NavbarDemo } from "../components/Navbar";
 import Header from "../components/Header";
 import { useAuth } from "../context/AuthContext";
+import { speechToTextService } from "../services/speechToTextService";
 
 export default function Itinerary() {
   const { currentUser } = useAuth();
@@ -13,6 +15,8 @@ export default function Itinerary() {
   const [messages, setMessages] = useState([]);
   const [mode, setMode] = useState("chat"); // 'chat' | 'planner'
   const [showSwitchModal, setShowSwitchModal] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [recordingError, setRecordingError] = useState("");
   const listEndRef = useRef(null);
 
   const newChatId = () =>
@@ -285,6 +289,40 @@ export default function Itinerary() {
     }
 
     return parts;
+  };
+
+  // Handle voice recording for speech-to-text
+  const handleVoiceRecording = async () => {
+    try {
+      setRecordingError("");
+
+      if (isRecording) {
+        // Stop recording and transcribe
+        setIsRecording(false);
+        const result = await speechToTextService.stopRecordingAndTranscribe();
+        
+        if (result.transcript) {
+          // Set the transcript in the prompt field
+          setPrompt(result.transcript);
+        }
+      } else {
+        // Start recording
+        await speechToTextService.startRecording();
+        setIsRecording(true);
+        
+        // Auto-stop after 10 seconds
+        setTimeout(() => {
+          if (speechToTextService.getIsRecording()) {
+            handleVoiceRecording();
+          }
+        }, 10000);
+      }
+    } catch (err) {
+      console.error('Voice recording error:', err);
+      setIsRecording(false);
+      setRecordingError(err.message || "Failed to record audio. Please try again.");
+      speechToTextService.cancelRecording();
+    }
   };
 
   const renderPlannerBubble = (payload) => {
@@ -617,20 +655,52 @@ export default function Itinerary() {
                   <label className="sr-only" htmlFor="prompt">
                     Message
                   </label>
-                  <textarea
-                    id="prompt"
-                    value={prompt}
-                    onChange={(e) => setPrompt(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter" && !e.shiftKey) {
-                        e.preventDefault();
-                        sendPrompt();
+                  <div className="relative">
+                    <textarea
+                      id="prompt"
+                      value={prompt}
+                      onChange={(e) => setPrompt(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" && !e.shiftKey) {
+                          e.preventDefault();
+                          sendPrompt();
+                        }
+                      }}
+                      rows={1}
+                      placeholder="Type your trip details…"
+                      className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-12 text-sm sm:text-base text-gray-800 shadow-inner focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
+                      disabled={isRecording}
+                    />
+                    {/* Mic button inside textarea */}
+                    <button
+                      type="button"
+                      onClick={handleVoiceRecording}
+                      disabled={loading}
+                      className={
+                        "absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-2 transition-all " +
+                        (isRecording
+                          ? "bg-red-500 text-white animate-pulse shadow-lg"
+                          : "bg-orange-100 text-orange-600 hover:bg-orange-200")
                       }
-                    }}
-                    rows={1}
-                    placeholder="Type your trip details…"
-                    className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 text-sm sm:text-base text-gray-800 shadow-inner focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
-                  />
+                      title={isRecording ? "Click to stop recording" : "Click to start voice input"}
+                    >
+                      {isRecording ? (
+                        <IconMicrophone className="h-4 w-4" />
+                      ) : (
+                        <IconMicrophoneOff className="h-4 w-4" />
+                      )}
+                    </button>
+                  </div>
+                  {isRecording && (
+                    <p className="mt-1 text-xs text-red-600 font-medium animate-pulse">
+                      🔴 Recording... (click mic to stop)
+                    </p>
+                  )}
+                  {recordingError && (
+                    <p className="mt-1 text-xs text-red-600">
+                      {recordingError}
+                    </p>
+                  )}
                   <div className="mt-2 flex flex-wrap gap-2 text-xs">
                     {[
                       "3 days",
