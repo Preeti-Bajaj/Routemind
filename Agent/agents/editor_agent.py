@@ -170,8 +170,27 @@ def extract_edits(user_message: str) -> Dict[str, Any]:
     print(preview, flush=True)
     _log(fn, "model_output_end")
 
+    # Handle empty response
+    if not content:
+        _log(fn, "error: empty response from model")
+        return {
+            "reset": False,
+            "ops": [],
+            "dirty_days": [],
+            "questions": ["Could you please clarify your request?"],
+        }
+
     # Parse and minimally validate/normalize.
-    data = json.loads(content)
+    try:
+        data = json.loads(content)
+    except json.JSONDecodeError as e:
+        _log(fn, f"error: json parse failed - {e}")
+        return {
+            "reset": False,
+            "ops": [],
+            "dirty_days": [],
+            "questions": ["Could you please rephrase your request?"],
+        }
 
     if "reset" not in data:
         data["reset"] = False
