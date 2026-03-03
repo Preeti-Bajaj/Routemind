@@ -6,6 +6,7 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import placesRoutes from "./routes/places.routes.js";
 import familyRoutes from "./routes/family.routes.js";
+import translationRoutes from "./routes/translation.routes.js";
 
 // Load environment variables
 dotenv.config();
@@ -62,6 +63,7 @@ app.use("/api/auth", authRoutes); // signup / signin / sync
 app.use("/api/users", userRoutes); // profile (me, update)
 app.use("/api/places", placesRoutes); // map / places APIs
 app.use("/api/family", familyRoutes); // family tracking & management
+app.use("/api/translate", translationRoutes); // translation proxy for Sarvam AI
 console.log("[API] [bootstrap] routes registered");
 
 // --------------------

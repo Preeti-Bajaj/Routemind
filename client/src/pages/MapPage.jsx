@@ -2,9 +2,13 @@ import React, { useEffect, useRef, useState } from 'react';
 import { IconMapPin, IconX, IconRoute, IconCurrentLocation, IconSearch, IconChevronDown, IconChevronUp, IconAlertCircle, IconCheck, IconHome, IconNavigation } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { NavbarDemo } from '../components/Navbar';
+import TranslatableText from '../components/TranslatableText';
+import LanguageSelector from '../components/LanguageSelector';
+import { useDynamicTranslation } from '../hooks/useDynamicTranslation';
 
 const MapPage = () => {
   const navigate = useNavigate();
+  const { translateText, currentLanguage } = useDynamicTranslation();
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [locationDetails, setLocationDetails] = useState(null);
@@ -128,6 +132,137 @@ const MapPage = () => {
       }
     };
   }, []);
+
+  // Translation observer for Mappls injected content
+  useEffect(() => {
+    // Only observe if not English and map is ready
+    if (!isMapReady) return;
+
+    const targetDiv = document.getElementById('nearby_search_results');
+    if (!targetDiv) return;
+
+    const translationCache = new Map();
+    let translationTimeout;
+    let isTranslating = false;
+
+    const translateMaplsText = async (element) => {
+      if (isTranslating) return;
+      isTranslating = true;
+
+      // Find clickable elements (a, button) and their text content
+      const clickableElements = element.querySelectorAll('a, button, [onclick]');
+      
+      for (const el of clickableElements) {
+        // Get only direct text content, not nested elements
+        const textNodes = Array.from(el.childNodes).filter(
+          node => node.nodeType === Node.TEXT_NODE && node.textContent.trim().length > 2
+        );
+
+        for (const textNode of textNodes) {
+          const originalText = textNode.textContent.trim();
+          
+          // Skip if already cached
+          if (translationCache.has(originalText)) {
+            const translatedText = translationCache.get(originalText);
+            // Preserve whitespace structure
+            textNode.textContent = textNode.textContent.replace(originalText, translatedText);
+            continue;
+          }
+
+          try {
+            const translated = await translateText(originalText);
+            if (translated && translated !== originalText) {
+              translationCache.set(originalText, translated);
+              // Preserve whitespace structure
+              textNode.textContent = textNode.textContent.replace(originalText, translated);
+            }
+          } catch (error) {
+            console.warn('Translation failed for:', originalText, error);
+          }
+        }
+      }
+
+      // Also translate non-clickable text (labels, descriptions)
+      const walker = document.createTreeWalker(
+        element,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            // Skip if parent is clickable (already handled)
+            if (node.parentElement && node.parentElement.closest('a, button, [onclick]')) {
+              return NodeFilter.FILTER_SKIP;
+            }
+            const text = node.textContent.trim();
+            return text && text.length > 2 && !/^\d+$/.test(text)
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_SKIP;
+          }
+        },
+        false
+      );
+
+      const nonClickableNodes = [];
+      let node;
+      while (node = walker.nextNode()) {
+        nonClickableNodes.push(node);
+      }
+
+      for (const textNode of nonClickableNodes) {
+        const originalText = textNode.textContent.trim();
+        
+        if (translationCache.has(originalText)) {
+          const translatedText = translationCache.get(originalText);
+          textNode.textContent = textNode.textContent.replace(originalText, translatedText);
+          continue;
+        }
+
+        try {
+          const translated = await translateText(originalText);
+          if (translated && translated !== originalText) {
+            translationCache.set(originalText, translated);
+            textNode.textContent = textNode.textContent.replace(originalText, translated);
+          }
+        } catch (error) {
+          console.warn('Translation failed for:', originalText, error);
+        }
+      }
+
+      isTranslating = false;
+    };
+
+    const observer = new MutationObserver((mutations) => {
+      // Clear previous timeout
+      clearTimeout(translationTimeout);
+      
+      // Wait longer (1.5s) to ensure Mappls has fully set up event handlers
+      translationTimeout = setTimeout(() => {
+        const hasNewContent = mutations.some(mutation => 
+          Array.from(mutation.addedNodes).some(node => node.nodeType === Node.ELEMENT_NODE)
+        );
+        
+        if (hasNewContent) {
+          console.log('Translating Mappls content after delay...');
+          translateMaplsText(targetDiv);
+        }
+      }, 1500);
+    });
+
+    observer.observe(targetDiv, {
+      childList: true,
+      subtree: true
+    });
+
+    // Translate existing content when language changes
+    if (targetDiv.children.length > 0) {
+      console.log('Translating existing Mappls content...');
+      setTimeout(() => translateMaplsText(targetDiv), 1500);
+    }
+
+    return () => {
+      observer.disconnect();
+      clearTimeout(translationTimeout);
+    };
+  }, [isMapReady, currentLanguage, translateText]);
 
   const initializeMap = () => {
     console.log('initializeMap called, checking requirements...');
@@ -400,7 +535,10 @@ const MapPage = () => {
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden bg-white text-slate-900">
       {/* Top Navigation Bar */}
-      <NavbarDemo />
+      <div className="flex items-center justify-between px-4 md:px-6 py-2 border-b border-slate-200">
+        <NavbarDemo />
+        <LanguageSelector />
+      </div>
 
       {/* Notification Toast */}
       {notification && (
@@ -434,8 +572,12 @@ const MapPage = () => {
                     <IconMapPin size={26} />
                   </div>
                   <div>
-                    <h2 className="text-xl font-semibold text-slate-900">Explore Odisha</h2>
-                    <p className="text-sm text-slate-500">Temples and shrines near you</p>
+                    <TranslatableText textKey="map_title" tag="h2" className="text-xl font-semibold text-slate-900">
+                      Explore Odisha
+                    </TranslatableText>
+                    <TranslatableText textKey="map_subtitle" tag="p" className="text-sm text-slate-500">
+                      Temples and shrines near you
+                    </TranslatableText>
                   </div>
                 </div>
               </div>
@@ -448,11 +590,15 @@ const MapPage = () => {
                   className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#f4622d] text-white font-semibold shadow-sm hover:bg-[#fa4909ff] transition-colors disabled:opacity-50"
                 >
                   <IconCurrentLocation size={20} className={isLoading ? 'animate-spin' : ''} />
-                  {currentUserLocation ? 'Location ready' : 'Use my location'}
+                  <TranslatableText textKey={currentUserLocation ? 'location_ready' : 'use_my_location'}>
+                    {currentUserLocation ? 'Location ready' : 'Use my location'}
+                  </TranslatableText>
                 </button>
 
                 <div>
-                  <p className="text-xs font-semibold text-slate-500 mb-3 uppercase tracking-[0.2em]">Choose a city</p>
+                  <TranslatableText textKey="choose_city" tag="p" className="text-xs font-semibold text-slate-500 mb-3 uppercase tracking-[0.2em]">
+                    Choose a city
+                  </TranslatableText>
                   <div className="flex items-center gap-2 p-1.5 bg-slate-100 border border-slate-200">
                     {Object.keys(cityCoordinates).map((city) => (
                       <button
@@ -476,9 +622,11 @@ const MapPage = () => {
                 <div className="p-4 bg-white border-b border-slate-200 sticky top-0 z-10">
                   <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                     <IconSearch size={18} className="text-amber-600" />
-                    Temples near {searchCity}
+                    <TranslatableText textKey="temples_near">Temples near</TranslatableText> {searchCity}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">Tap a place in the list to view details</p>
+                  <TranslatableText textKey="tap_place_list" tag="p" className="mt-1 text-xs text-slate-500">
+                    Tap a place in the list to view details
+                  </TranslatableText>
                 </div>
 
                 {!isMapReady && (
@@ -487,7 +635,9 @@ const MapPage = () => {
                       <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
                       <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
                     </div>
-                    <p className="mt-6 text-slate-600 font-medium">Preparing map…</p>
+                    <TranslatableText textKey="preparing_map" tag="p" className="mt-6 text-slate-600 font-medium">
+                      Preparing map…
+                    </TranslatableText>
                   </div>
                 )}
 
@@ -534,7 +684,9 @@ const MapPage = () => {
               <div className="w-12 h-1.5 bg-slate-300"></div>
               <div className="flex items-center gap-2 text-slate-600 text-sm font-medium">
                 {isBottomSheetOpen ? <IconChevronDown size={18} /> : <IconChevronUp size={18} />}
-                {isBottomSheetOpen ? 'Swipe down' : 'Tap to browse'}
+                <TranslatableText textKey={isBottomSheetOpen ? 'swipe_down' : 'tap_to_browse'}>
+                  {isBottomSheetOpen ? 'Swipe down' : 'Tap to browse'}
+                </TranslatableText>
               </div>
             </button>
 
@@ -548,7 +700,9 @@ const MapPage = () => {
                   className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#f4622d] text-white font-semibold shadow-sm active:bg-[#fa4909ff] transition-colors disabled:opacity-50"
                 >
                   <IconCurrentLocation size={20} className={isLoading ? 'animate-spin' : ''} />
-                  {currentUserLocation ? 'Location ready' : 'Use my location'}
+                  <TranslatableText textKey={currentUserLocation ? 'location_ready' : 'use_my_location'}>
+                    {currentUserLocation ? 'Location ready' : 'Use my location'}
+                  </TranslatableText>
                 </button>
 
                 <div>
@@ -576,9 +730,13 @@ const MapPage = () => {
                 <div className="p-3 bg-white border-b border-slate-200 sticky top-0 z-10">
                   <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
                     <IconSearch size={18} className="text-amber-600" />
-                    Near {searchCity}
+                    <TranslatableText textKey="near_city">
+                      Near
+                    </TranslatableText> {searchCity}
                   </p>
-                  <p className="mt-1 text-xs text-slate-500">Tap a result to open details</p>
+                  <TranslatableText textKey="tap_result" tag="p" className="mt-1 text-xs text-slate-500">
+                    Tap a result to open details
+                  </TranslatableText>
                 </div>
                 
                 {!isMapReady && (
@@ -587,7 +745,9 @@ const MapPage = () => {
                       <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
                       <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
                     </div>
-                    <p className="mt-4 text-slate-600 text-sm font-medium">Loading…</p>
+                    <TranslatableText textKey="loading" tag="p" className="mt-4 text-slate-600 text-sm font-medium">
+                      Loading…
+                    </TranslatableText>
                   </div>
                 )}
                 
@@ -645,7 +805,9 @@ const MapPage = () => {
                     <IconMapPin size={20} />
                   </div>
                   <div className="flex-1">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-[0.15em] mb-1">Address</p>
+                    <TranslatableText textKey="address_label" tag="p" className="text-xs font-semibold text-slate-500 uppercase tracking-[0.15em] mb-1">
+                      Address
+                    </TranslatableText>
                     <p className="text-slate-800 font-medium leading-relaxed">
                       {locationDetails.address || `${locationDetails.city}, Odisha, India`}
                     </p>
@@ -656,9 +818,9 @@ const MapPage = () => {
               {/* eLoc Card */}
               {locationDetails.eLoc && (
                 <div className="p-5 border border-amber-200 bg-amber-50">
-                  <p className="text-xs font-semibold text-amber-700 uppercase tracking-[0.18em] mb-2">
+                  <TranslatableText textKey="digital_address" tag="p" className="text-xs font-semibold text-amber-700 uppercase tracking-[0.18em] mb-2">
                     Digital Address (eLoc)
-                  </p>
+                  </TranslatableText>
                   <div className="bg-white p-4 border border-amber-200">
                     <code className="font-mono text-xl font-semibold text-slate-900 tracking-widest">
                       {locationDetails.eLoc}
@@ -678,13 +840,15 @@ const MapPage = () => {
                   className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-[#f4622d] text-white font-semibold text-base shadow-sm hover:bg-[#fa4909ff] transition-colors disabled:opacity-50"
                 >
                   <IconRoute size={22} />
-                  {currentUserLocation ? 'Get directions' : 'Set location first'}
+                  <TranslatableText textKey={currentUserLocation ? 'get_directions' : 'set_location_first'}>
+                    {currentUserLocation ? 'Get directions' : 'Set location first'}
+                  </TranslatableText>
                 </button>
                 
                 {!currentUserLocation && (
-                  <p className="text-center text-sm text-slate-500">
+                  <TranslatableText textKey="tap_location_icon" tag="p" className="text-center text-sm text-slate-500">
                     Tap the location icon in header to enable routing
-                  </p>
+                  </TranslatableText>
                 )}
               </div>
             </div>

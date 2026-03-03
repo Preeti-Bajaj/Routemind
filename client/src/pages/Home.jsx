@@ -1,29 +1,44 @@
 import { NavbarDemo } from "../components/Navbar";
+import TranslatableText from "../components/TranslatableText";
+import LanguageSelector from "../components/LanguageSelector";
 
 const Home = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Navbar */}
-      <header className="p-4 md:px-10">
+      <header className="p-4 md:px-10 flex items-center justify-between gap-4">
         <NavbarDemo />
+        <LanguageSelector />
       </header>
 
       {/* Hero Section */}
       <section className="relative flex flex-col-reverse md:flex-row items-center justify-between px-6 md:px-16 py-16 lg:py-40 gap-14">
         <div className="relative md:w-1/2 text-center md:text-left space-y-8">
-          <h1 className="text-4xl md:text-6xl font-bold bg-white bg-clip-text text-[#f4622d] leading-tight">
+          <TranslatableText 
+            textKey="hero_title" 
+            tag="h1" 
+            className="text-4xl md:text-6xl font-bold bg-white bg-clip-text text-[#f4622d] leading-tight"
+          >
             Odisha Pilgrim Yatra
-          </h1>
-          <p className="text-gray-700 text-lg md:text-xl max-w-xl">
-            Experience Odisha’s sacred spirit and cultural grandeur , a journey that begins at the holy Jagannath Temple in Puri, flows through the architectural wonder of Konark, and finds peace in the ancient shrines of Bhubaneswar
-          </p>
+          </TranslatableText>
+          <TranslatableText 
+            textKey="hero_description" 
+            tag="p" 
+            className="text-gray-700 text-lg md:text-xl max-w-xl"
+          >
+            Experience Odisha's sacred spirit and cultural grandeur , a journey that begins at the holy Jagannath Temple in Puri, flows through the architectural wonder of Konark, and finds peace in the ancient shrines of Bhubaneswar
+          </TranslatableText>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center md:justify-start pt-2">
             <button className="px-8 py-3 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-2xl shadow-lg hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
-              Explore Temples
+              <TranslatableText textKey="btn_explore_temples">
+                Explore Temples
+              </TranslatableText>
             </button>
             <button className="px-8 py-3 border border-orange-400 text-orange-600 rounded-2xl hover:bg-orange-100 transition-all duration-300">
-              Plan Your Yatra
+              <TranslatableText textKey="btn_plan_yatra">
+                Plan Your Yatra
+              </TranslatableText>
             </button>
           </div>
         </div>
@@ -40,14 +55,22 @@ const Home = () => {
 
       {/* Why Travel to Odisha */}
       <section className="px-6 md:px-16 py-20 bg-white">
-        <h2 className="text-3xl md:text-4xl font-bold mb-4 lg:mb-8 text-center bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent">
+        <TranslatableText 
+          textKey="why_odisha_title" 
+          tag="h2" 
+          className="text-3xl md:text-4xl font-bold mb-4 lg:mb-8 text-center bg-gradient-to-r from-orange-600 to-orange-400 bg-clip-text text-transparent"
+        >
           Why You Should Travel to Odisha
-        </h2>
-        <p className="text-center text-gray-600 max-w-2xl mx-auto mb-12 text-lg">
+        </TranslatableText>
+        <TranslatableText 
+          textKey="why_odisha_desc" 
+          tag="p" 
+          className="text-center text-gray-600 max-w-2xl mx-auto mb-12 text-lg"
+        >
           Odisha is a land where spirituality meets nature , ancient temples,
           golden beaches, tribal culture, and rich heritage make it a perfect
           destination for pilgrims and travelers alike.
-        </p>
+        </TranslatableText>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {[
@@ -77,10 +100,20 @@ const Home = () => {
                 className="h-56 w-full object-cover group-hover:scale-105 transition duration-500"
               />
               <div className="p-6 bg-white">
-                <h3 className="text-xl font-semibold text-orange-600">
+                <TranslatableText 
+                  textKey={`place_title_${i}`}
+                  tag="h3" 
+                  className="text-xl font-semibold text-orange-600"
+                >
                   {place.title}
-                </h3>
-                <p className="mt-2 text-gray-600">{place.desc}</p>
+                </TranslatableText>
+                <TranslatableText 
+                  textKey={`place_desc_${i}`}
+                  tag="p" 
+                  className="mt-2 text-gray-600"
+                >
+                  {place.desc}
+                </TranslatableText>
               </div>
             </div>
           ))}
@@ -89,9 +122,13 @@ const Home = () => {
 
       {/* Beaches */}
       <section className="px-6 md:px-16 py-20 bg-orange-50">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-orange-600 mb-12">
+        <TranslatableText 
+          textKey="beaches_title" 
+          tag="h2" 
+          className="text-3xl md:text-4xl font-bold text-center text-orange-600 mb-12"
+        >
           Serene Beaches of Odisha
-        </h2>
+        </TranslatableText>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           <img
@@ -100,23 +137,35 @@ const Home = () => {
             className="rounded-3xl shadow-lg object-cover h-80 w-full"
           />
           <div className="flex flex-col justify-center space-y-4">
-            <h3 className="text-2xl font-semibold text-orange-600">
+            <TranslatableText 
+              textKey="beach_subtitle" 
+              tag="h3" 
+              className="text-2xl font-semibold text-orange-600"
+            >
               Puri & Chandrabhaga Beach
-            </h3>
-            <p className="text-gray-700 text-lg">
-              Odisha’s coastline offers peaceful beaches where pilgrims can
+            </TranslatableText>
+            <TranslatableText 
+              textKey="beach_desc" 
+              tag="p" 
+              className="text-gray-700 text-lg"
+            >
+              Odisha's coastline offers peaceful beaches where pilgrims can
               relax after darshan. The sunrise at Chandrabhaga Beach is one of
               the most beautiful sights in eastern India.
-            </p>
+            </TranslatableText>
           </div>
         </div>
       </section>
 
       {/* Culture & Food */}
       <section className="px-6 md:px-16 py-20 bg-white">
-        <h2 className="text-3xl md:text-4xl font-bold text-center text-orange-600 mb-12">
+        <TranslatableText 
+          textKey="culture_title" 
+          tag="h2" 
+          className="text-3xl md:text-4xl font-bold text-center text-orange-600 mb-12"
+        >
           Culture & Cuisine
-        </h2>
+        </TranslatableText>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {[
@@ -146,10 +195,20 @@ const Home = () => {
                 className="h-52 w-full object-cover"
               />
               <div className="p-6">
-                <h3 className="text-xl font-semibold text-orange-600">
+                <TranslatableText 
+                  textKey={`culture_title_${i}`}
+                  tag="h3" 
+                  className="text-xl font-semibold text-orange-600"
+                >
                   {item.title}
-                </h3>
-                <p className="mt-2 text-gray-600">{item.desc}</p>
+                </TranslatableText>
+                <TranslatableText 
+                  textKey={`culture_desc_${i}`}
+                  tag="p" 
+                  className="mt-2 text-gray-600"
+                >
+                  {item.desc}
+                </TranslatableText>
               </div>
             </div>
           ))}
@@ -160,21 +219,33 @@ const Home = () => {
       <section className="relative px-6 md:px-16 py-20 bg-gradient-to-r from-orange-500 to-orange-600 text-white text-center overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.2),transparent)]"></div>
 
-        <h2 className="relative text-3xl md:text-4xl font-bold">
+        <TranslatableText 
+          textKey="cta_title" 
+          tag="h2" 
+          className="relative text-3xl md:text-4xl font-bold"
+        >
           Begin Your Sacred Journey Today
-        </h2>
-        <p className="relative mt-4 text-orange-100 max-w-xl mx-auto text-lg">
+        </TranslatableText>
+        <TranslatableText 
+          textKey="cta_desc" 
+          tag="p" 
+          className="relative mt-4 text-orange-100 max-w-xl mx-auto text-lg"
+        >
           Plan your Odisha pilgrimage and explore temples, beaches, and culture
           in one divine journey.
-        </p>
+        </TranslatableText>
         <button className="relative mt-8 px-10 py-3 bg-white text-orange-600 rounded-2xl font-semibold shadow-lg hover:bg-orange-100 hover:scale-105 transition-all duration-300">
-          Start Your Yatra
+          <TranslatableText textKey="btn_start_yatra">
+            Start Your Yatra
+          </TranslatableText>
         </button>
       </section>
 
       {/* Footer */}
       <footer className="py-6 text-center text-gray-600 bg-white">
-        © 2026 Odisha Pilgrim. All rights reserved.
+        <TranslatableText textKey="footer_text">
+          © 2026 Odisha Pilgrim. All rights reserved.
+        </TranslatableText>
       </footer>
     </div>
   );
