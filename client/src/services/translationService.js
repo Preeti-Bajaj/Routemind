@@ -6,7 +6,7 @@ class TranslationService {
     this.requestQueue = [];
     this.pendingRequests = new Map(); // Track pending requests
     this.isProcessing = false;
-    this.requestDelay = 150; // Delay between requests (ms) - increased to avoid rate limits
+    this.requestDelay = 100; // Delay between requests (ms) - optimized for progressive updates
     this.maxRetries = 2; // Reduced retries
     this.storageKey = 'translation_cache';
     
@@ -39,6 +39,17 @@ class TranslationService {
   }
 
   async translateText(text, targetLanguage, sourceLanguage = 'en-IN') {
+    // Handle empty or very short text
+    if (!text || text.trim().length === 0) {
+      return text;
+    }
+
+    // If text is too long, chunk it
+    const MAX_CHARS = 900; // Leave buffer below 1000 char limit (Sarvam mayura:v1)
+    if (text.length > MAX_CHARS) {
+      return this.translateLongText(text, targetLanguage, sourceLanguage);
+    }
+
     const cacheKey = `${text}_${sourceLanguage}_${targetLanguage}`;
     
     // Check cache first
@@ -83,6 +94,56 @@ class TranslationService {
     this.pendingRequests.set(cacheKey, promise);
     
     return promise;
+  }
+
+  // Handle text longer than 2000 characters by chunking
+  async translateLongText(text, targetLanguage, sourceLanguage = 'en-IN') {
+    const MAX_CHARS = 900; // Sarvam mayura:v1 has 1000 char limit
+    const chunks = [];
+    
+    // Try to split on sentence boundaries first
+    const sentences = text.match(/[^.!?]+[.!?]+/g) || [text];
+    let currentChunk = '';
+    
+    for (const sentence of sentences) {
+      if ((currentChunk + sentence).length <= MAX_CHARS) {
+        currentChunk += sentence;
+      } else {
+        if (currentChunk) {
+          chunks.push(currentChunk);
+        }
+        // If single sentence is too long, split it by words
+        if (sentence.length > MAX_CHARS) {
+          const words = sentence.split(' ');
+          let wordChunk = '';
+          for (const word of words) {
+            if ((wordChunk + ' ' + word).length <= MAX_CHARS) {
+              wordChunk += (wordChunk ? ' ' : '') + word;
+            } else {
+              if (wordChunk) chunks.push(wordChunk);
+              wordChunk = word;
+            }
+          }
+          if (wordChunk) chunks.push(wordChunk);
+          currentChunk = '';
+        } else {
+          currentChunk = sentence;
+        }
+      }
+    }
+    
+    if (currentChunk) {
+      chunks.push(currentChunk);
+    }
+
+    console.log(`[TranslationService] Chunking long text into ${chunks.length} parts`);
+
+    // Translate each chunk
+    const translatedChunks = await Promise.all(
+      chunks.map(chunk => this.translateText(chunk, targetLanguage, sourceLanguage))
+    );
+
+    return translatedChunks.join('');
   }
 
   async processQueue() {
@@ -158,6 +219,8 @@ class TranslationService {
   }
 
   async makeRequest(text, targetLanguage, sourceLanguage) {
+    console.log(`[Translation] Translating: "${text.substring(0, 50)}..." (${text.length} chars) to ${targetLanguage}`);
+    
     const response = await fetch(this.baseURL, {
       method: 'POST',
       headers: {
@@ -173,7 +236,8 @@ class TranslationService {
     const data = await response.json();
     
     if (!data.success) {
-      const error = new Error(data.message || 'Translation failed');
+      console.error('[Translation] Sarvam API error:', response.status, data);
+      const error = new Error(data.message || 'Translation service error');
       error.status = response.status;
       throw error;
     }

@@ -6,6 +6,355 @@ import { NavbarDemo } from "../components/Navbar";
 import Header from "../components/Header";
 import { useAuth } from "../context/AuthContext";
 import { speechToTextService } from "../services/speechToTextService";
+import translationService from "../services/translationService";
+
+// Message with translation dropdown component for text messages
+function MessageWithTranslation({ messageId, content, renderWithLinks, translateMessage, supportedLanguages, translatingMessageId }) {
+  const [selectedLang, setSelectedLang] = useState("en-IN");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [displayContent, setDisplayContent] = useState(content);
+
+  const handleTranslate = async (langCode) => {
+    if (langCode === "en-IN") {
+      setDisplayContent(content);
+      setSelectedLang(langCode);
+      setShowDropdown(false);
+      return;
+    }
+
+    const translated = await translateMessage(messageId, langCode, content);
+    setDisplayContent(translated);
+    setSelectedLang(langCode);
+    setShowDropdown(false);
+  };
+
+  return (
+    <div>
+      {/* Translation dropdown */}
+      <div className="flex justify-end mb-2">
+        <TranslateButton 
+          selectedLang={selectedLang}
+          showDropdown={showDropdown}
+          setShowDropdown={setShowDropdown}
+          handleTranslate={handleTranslate}
+          supportedLanguages={supportedLanguages}
+          translatingMessageId={translatingMessageId}
+          messageId={messageId}
+        />
+      </div>
+      
+      {/* Message content */}
+      <p className="text-sm whitespace-pre-wrap text-gray-800 leading-relaxed" style={{ lineHeight: '1.8' }}>
+        {renderWithLinks(displayContent, false)}
+      </p>
+    </div>
+  );
+}
+
+// Planner bubble with translation component
+function PlannerBubbleWithTranslation({ messageId, payload, translatePlannerData, supportedLanguages, translatingMessageId }) {
+  const [selectedLang, setSelectedLang] = useState("en-IN");
+  const [showDropdown, setShowDropdown] = useState(false);
+  const [displayData, setDisplayData] = useState(payload);
+  const [translationProgress, setTranslationProgress] = useState(null); // { completed, total }
+
+  const handleTranslate = async (langCode) => {
+    if (langCode === "en-IN") {
+      setDisplayData(payload);
+      setSelectedLang(langCode);
+      setShowDropdown(false);
+      setTranslationProgress(null);
+      return;
+    }
+
+    // Progress callback to update UI as translations complete
+    const onProgressUpdate = (partialData, completed, total) => {
+      setDisplayData(partialData);
+      setTranslationProgress({ completed, total });
+      console.log(`[Translation Progress] ${completed}/${total} fields translated`);
+    };
+
+    setTranslationProgress({ completed: 0, total: 1 }); // Initialize progress
+
+    // Use smart planner translation with progressive updates
+    const translatedPayload = await translatePlannerData(
+      messageId, 
+      langCode, 
+      payload,
+      onProgressUpdate // Pass callback for live updates
+    );
+    
+    setDisplayData(translatedPayload);
+    setSelectedLang(langCode);
+    setShowDropdown(false);
+    setTranslationProgress(null); // Clear progress when done
+  };
+
+  const data = displayData;
+
+  if (!data || typeof data !== "object") {
+    return (
+      <div>
+        <div className="flex justify-end mb-2">
+          <TranslateButton 
+            selectedLang={selectedLang}
+            showDropdown={showDropdown}
+            setShowDropdown={setShowDropdown}
+            handleTranslate={handleTranslate}
+            supportedLanguages={supportedLanguages}
+            translatingMessageId={translatingMessageId}
+            messageId={messageId}
+          />
+        </div>
+        <p className="text-sm text-gray-800">No response received.</p>
+      </div>
+    );
+  }
+
+  if (data.reset === true) {
+    return (
+      <div>
+        <div className="flex justify-end mb-2">
+          <TranslateButton 
+            selectedLang={selectedLang}
+            showDropdown={showDropdown}
+            setShowDropdown={setShowDropdown}
+            handleTranslate={handleTranslate}
+            supportedLanguages={supportedLanguages}
+            translatingMessageId={translatingMessageId}
+            messageId={messageId}
+          />
+        </div>
+        <p className="text-sm text-gray-800">
+          Reset done. Send your trip details to begin.
+        </p>
+      </div>
+    );
+  }
+
+  if (data.ok === false) {
+    return (
+      <div>
+        <div className="flex justify-end mb-2">
+          <TranslateButton 
+            selectedLang={selectedLang}
+            showDropdown={showDropdown}
+            setShowDropdown={setShowDropdown}
+            handleTranslate={handleTranslate}
+            supportedLanguages={supportedLanguages}
+            translatingMessageId={translatingMessageId}
+            messageId={messageId}
+          />
+        </div>
+        <p className="text-sm text-gray-800">
+          {data.error ||
+            "Problem fetching itinerary right now. Please try again."}
+        </p>
+      </div>
+    );
+  }
+
+  const meta = data.meta || {};
+  const destination = meta.destination || "Odisha";
+  const dateRange = meta.date_range || "NA";
+  const days = meta.trip_length_days ?? "NA";
+
+  return (
+    <div className="space-y-3">
+      {/* Translation dropdown at the top */}
+      <div className="flex justify-end">
+        <TranslateButton 
+          selectedLang={selectedLang}
+          showDropdown={showDropdown}
+          setShowDropdown={setShowDropdown}
+          handleTranslate={handleTranslate}
+          supportedLanguages={supportedLanguages}
+          translatingMessageId={translatingMessageId}
+          messageId={messageId}
+        />
+      </div>
+
+      {/* Translation Progress Indicator */}
+      {translationProgress && (
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-xs font-medium text-blue-900">
+              ✨ Live translation in progress...
+            </span>
+            <span className="text-xs text-blue-700">
+              {translationProgress.completed}/{translationProgress.total} fields
+            </span>
+          </div>
+          <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+            <div 
+              className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full transition-all duration-300 ease-out"
+              style={{ 
+                width: `${(translationProgress.completed / translationProgress.total) * 100}%` 
+              }}
+            />
+          </div>
+        </div>
+      )}
+      
+      <div>
+        <p className="text-sm font-semibold text-gray-900">
+          Your itinerary ({days} days) · {destination}
+        </p>
+        <p className="text-xs text-gray-600">{dateRange}</p>
+      </div>
+
+      {Array.isArray(meta.clarifying_questions) &&
+        meta.clarifying_questions.length > 0 && (
+          <div className="rounded-xl border border-orange-100 bg-orange-50/70 p-3">
+            <p className="text-xs font-semibold text-orange-800">
+              Quick questions
+            </p>
+            <ul className="mt-2 list-disc pl-5 text-xs text-orange-900/90 space-y-2">
+              {meta.clarifying_questions.map((q, idx) => (
+                <li key={idx} className="leading-relaxed" style={{ lineHeight: '1.6' }}>{q}</li>
+              ))}
+            </ul>
+          </div>
+        )}
+
+      <details className="group rounded-xl border border-gray-200 bg-white/60 p-3">
+        <summary className="cursor-pointer select-none text-sm font-semibold text-gray-900">
+          Day-by-day plan
+          <span className="ml-2 text-xs font-normal text-gray-500 group-open:hidden">
+            (click to expand)
+          </span>
+        </summary>
+        <div className="mt-3 space-y-3">
+          {Array.isArray(data.itinerary) &&
+          data.itinerary.length > 0 ? (
+            data.itinerary.map((d) => (
+              <div
+                key={d.day}
+                className="rounded-lg border border-gray-200 bg-white p-3"
+              >
+                <p className="text-sm font-semibold text-orange-700">
+                  Day {d.day}
+                </p>
+                {["morning", "afternoon", "evening"].map((slot) => (
+                  <div key={slot} className="mt-2">
+                    <p className="text-xs font-semibold text-gray-700 capitalize">
+                      {slot}
+                    </p>
+                    <ul className="mt-1 space-y-2">
+                      {Array.isArray(d[slot]) && d[slot].length > 0 ? (
+                        d[slot].map((item, idx) => (
+                          <li key={idx} className="text-xs text-gray-700 leading-relaxed" style={{ lineHeight: '1.6' }}>
+                            <span className="font-semibold text-gray-900">
+                              {item.time || "NA"}
+                            </span>
+                            <span className="text-gray-500"> · </span>
+                            <span>{item.activity || "NA"}</span>
+                            {item.area_and_transit ? (
+                              <span className="text-gray-500">
+                                {" "}
+                                — {item.area_and_transit}
+                              </span>
+                            ) : null}
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-xs text-gray-500">NA</li>
+                      )}
+                    </ul>
+                  </div>
+                ))}
+              </div>
+            ))
+          ) : (
+            <p className="text-xs text-gray-600">No itinerary returned.</p>
+          )}
+        </div>
+      </details>
+
+      <details className="group rounded-xl border border-gray-200 bg-white/60 p-3">
+        <summary className="cursor-pointer select-none text-sm font-semibold text-gray-900">
+          Budget, logistics & tips
+        </summary>
+        <div className="mt-3 grid gap-3 sm:grid-cols-2">
+          <div className="rounded-lg border border-gray-200 bg-white p-3">
+            <p className="text-xs font-semibold text-gray-800">Budget</p>
+            <p className="mt-1 text-xs text-gray-700 leading-relaxed" style={{ lineHeight: '1.6' }}>
+              {data.budget?.currency || "NA"}{" "}
+              {data.budget?.trip_estimate ?? "NA"}
+            </p>
+          </div>
+          <div className="rounded-lg border border-gray-200 bg-white p-3">
+            <p className="text-xs font-semibold text-gray-800">Transport</p>
+            <ul className="mt-2 list-disc pl-5 text-xs text-gray-700 space-y-2">
+              {Array.isArray(data.logistics?.local_transport) &&
+              data.logistics.local_transport.length > 0 ? (
+                data.logistics.local_transport.map((t, idx) => (
+                  <li key={idx} className="leading-relaxed" style={{ lineHeight: '1.6' }}>{t}</li>
+                ))
+              ) : (
+                <li>NA</li>
+              )}
+            </ul>
+          </div>
+        </div>
+      </details>
+    </div>
+  );
+}
+
+// Reusable translate button component
+function TranslateButton({ selectedLang, showDropdown, setShowDropdown, handleTranslate, supportedLanguages, translatingMessageId, messageId }) {
+  const dropdownRef = useRef(null);
+
+  // Close dropdown when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        setShowDropdown(false);
+      }
+    };
+    
+    if (showDropdown) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [showDropdown, setShowDropdown]);
+
+  return (
+    <div className="relative inline-block" ref={dropdownRef}>
+      <button
+        onClick={() => setShowDropdown(!showDropdown)}
+        disabled={translatingMessageId === messageId}
+        className="text-xs text-gray-500 hover:text-orange-600 transition flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 shadow-sm"
+        title="Translate this message"
+      >
+        🌐 {supportedLanguages.find(l => l.code === selectedLang)?.name || 'Translate'}
+        {translatingMessageId === messageId ? ' ⏳' : ' ▾'}
+      </button>
+      
+      {showDropdown && (
+        <div className="absolute right-0 top-full mt-1 w-44 bg-white border-2 border-gray-300 rounded-xl shadow-2xl z-50 max-h-72 overflow-y-auto">
+          {supportedLanguages.map((lang) => (
+            <button
+              key={lang.code}
+              onClick={() => handleTranslate(lang.code)}
+              className={`w-full text-left px-3 py-2.5 text-sm hover:bg-orange-50 transition-colors flex items-center gap-2 first:rounded-t-xl last:rounded-b-xl ${
+                selectedLang === lang.code ? 'bg-orange-100 text-orange-700 font-semibold' : 'text-gray-800 hover:text-orange-600'
+              }`}
+            >
+              <span className="text-lg">{lang.flag}</span>
+              <span className="flex-1">{lang.name}</span>
+              {selectedLang === lang.code && <span className="text-orange-600 font-bold">✓</span>}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Itinerary() {
   const { currentUser } = useAuth();
@@ -17,7 +366,36 @@ export default function Itinerary() {
   const [showSwitchModal, setShowSwitchModal] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [recordingError, setRecordingError] = useState("");
+  const [messageTranslations, setMessageTranslations] = useState({}); // Store translations per message
+  const [translatingMessageId, setTranslatingMessageId] = useState(null); // Track which message is being translated
   const listEndRef = useRef(null);
+
+  // Supported languages for translation
+  const supportedLanguages = [
+    { code: "en-IN", name: "English", flag: "🇬🇧" },
+    { code: "hi-IN", name: "हिंदी", flag: "🇮🇳" },
+    { code: "bn-IN", name: "বাংলা", flag: "🇮🇳" },
+    { code: "gu-IN", name: "ગુજરાતી", flag: "🇮🇳" },
+    { code: "kn-IN", name: "ಕನ್ನಡ", flag: "🇮🇳" },
+    { code: "ml-IN", name: "മലയാളം", flag: "🇮🇳" },
+    { code: "mr-IN", name: "मराठी", flag: "🇮🇳" },
+    { code: "or-IN", name: "ଓଡ଼ିଆ", flag: "🇮🇳" },
+    { code: "pa-IN", name: "ਪੰਜਾਬੀ", flag: "🇮🇳" },
+    { code: "ta-IN", name: "தமிழ்", flag: "🇮🇳" },
+    { code: "te-IN", name: "తెలుగు", flag: "🇮🇳" },
+  ];
+
+  // Load cached translations from sessionStorage on mount
+  useEffect(() => {
+    try {
+      const cached = sessionStorage.getItem('message_translations');
+      if (cached) {
+        setMessageTranslations(JSON.parse(cached));
+      }
+    } catch (error) {
+      console.error('Failed to load cached translations:', error);
+    }
+  }, []);
 
   const newChatId = () =>
     typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
@@ -200,6 +578,7 @@ export default function Itinerary() {
       if (!res.ok) throw new Error(`Request failed: ${res.status}`);
 
       const data = await res.json();
+      
       setMessages((prev) => {
         const ts = Date.now();
         if (mode === "planner") {
@@ -325,138 +704,314 @@ export default function Itinerary() {
     }
   };
 
-  const renderPlannerBubble = (payload) => {
-    if (!payload || typeof payload !== "object") {
-      return <p className="text-sm text-gray-800">No response received.</p>;
+  // Translate a specific message
+  // Translate regular chat message (text only) - preserves formatting
+  const translateMessage = async (messageId, targetLanguage, originalContent) => {
+    const cacheKey = `${messageId}_${targetLanguage}`;
+    
+    // Check if already cached in state
+    if (messageTranslations[cacheKey]) {
+      return messageTranslations[cacheKey];
     }
 
-    if (payload.reset === true) {
-      return (
-        <p className="text-sm text-gray-800">
-          Reset done. Send your trip details to begin.
-        </p>
-      );
+    // Check sessionStorage
+    try {
+      const cached = sessionStorage.getItem('message_translations');
+      if (cached) {
+        const allTranslations = JSON.parse(cached);
+        if (allTranslations[cacheKey]) {
+          setMessageTranslations(prev => ({ ...prev, [cacheKey]: allTranslations[cacheKey] }));
+          return allTranslations[cacheKey];
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check cached translation:', error);
     }
 
-    if (payload.ok === false) {
-      return (
-        <p className="text-sm text-gray-800">
-          {payload.error ||
-            "Problem fetching itinerary right now. Please try again."}
-        </p>
-      );
+    // Translate using Sarvam AI - preserve line breaks and structure
+    setTranslatingMessageId(messageId);
+    try {
+      // Split by double line breaks (paragraphs) first, then by single line breaks
+      const paragraphs = originalContent.split('\n\n');
+      const translatedParagraphs = [];
+
+      for (const paragraph of paragraphs) {
+        if (!paragraph.trim()) {
+          translatedParagraphs.push('');
+          continue;
+        }
+
+        // Split each paragraph by single line breaks to preserve list structure
+        const lines = paragraph.split('\n');
+        const translatedLines = [];
+
+        for (const line of lines) {
+          if (!line.trim()) {
+            translatedLines.push('');
+            continue;
+          }
+
+          const translated = await translationService.translateText(
+            line.trim(),
+            targetLanguage,
+            "en-IN"
+          );
+          translatedLines.push(translated);
+        }
+
+        translatedParagraphs.push(translatedLines.join('\n'));
+      }
+
+      const finalTranslated = translatedParagraphs.join('\n\n');
+
+      // Update state and sessionStorage
+      const newTranslations = { ...messageTranslations, [cacheKey]: finalTranslated };
+      setMessageTranslations(newTranslations);
+      
+      try {
+        sessionStorage.setItem('message_translations', JSON.stringify(newTranslations));
+      } catch (error) {
+        console.error('Failed to cache translation:', error);
+      }
+
+      return finalTranslated;
+    } catch (error) {
+      console.error('Translation error:', error);
+      return originalContent; // Return original on error
+    } finally {
+      setTranslatingMessageId(null);
+    }
+  };
+
+  // Translate planner data (JSON structure) - only visible text fields with progressive updates
+  const translatePlannerData = async (messageId, targetLanguage, originalPayload, onProgressUpdate) => {
+    const cacheKey = `planner_${messageId}_${targetLanguage}`;
+    
+    // Check if already cached in state
+    if (messageTranslations[cacheKey]) {
+      return messageTranslations[cacheKey];
     }
 
-    const meta = payload.meta || {};
-    const destination = meta.destination || "Odisha";
-    const dateRange = meta.date_range || "NA";
-    const days = meta.trip_length_days ?? "NA";
+    // Check sessionStorage
+    try {
+      const cached = sessionStorage.getItem('message_translations');
+      if (cached) {
+        const allTranslations = JSON.parse(cached);
+        if (allTranslations[cacheKey]) {
+          setMessageTranslations(prev => ({ ...prev, [cacheKey]: allTranslations[cacheKey] }));
+          return allTranslations[cacheKey];
+        }
+      }
+    } catch (error) {
+      console.error('Failed to check cached planner translation:', error);
+    }
 
+    setTranslatingMessageId(messageId);
+    try {
+      // Deep clone the payload
+      const translatedPayload = JSON.parse(JSON.stringify(originalPayload));
+
+      // Extract all text fields that need translation (visible in UI)
+      const translationTasks = []; // Array of {path, text}
+
+      // Meta clarifying questions
+      if (Array.isArray(translatedPayload.meta?.clarifying_questions)) {
+        translatedPayload.meta.clarifying_questions.forEach((q, idx) => {
+          if (q && q.length < 2000) {
+            translationTasks.push({
+              path: ['meta', 'clarifying_questions', idx],
+              text: q
+            });
+          }
+        });
+      }
+
+      // Stay areas
+      if (Array.isArray(translatedPayload.stay_areas)) {
+        translatedPayload.stay_areas.forEach((area, idx) => {
+          if (area.area && area.area.length < 2000) {
+            translationTasks.push({
+              path: ['stay_areas', idx, 'area'],
+              text: area.area
+            });
+          }
+          if (area.why && area.why.length < 2000) {
+            translationTasks.push({
+              path: ['stay_areas', idx, 'why'],
+              text: area.why
+            });
+          }
+        });
+      }
+
+      // Itinerary activities
+      if (Array.isArray(translatedPayload.itinerary)) {
+        translatedPayload.itinerary.forEach((day, dayIdx) => {
+          ['morning', 'afternoon', 'evening'].forEach(slot => {
+            if (Array.isArray(day[slot])) {
+              day[slot].forEach((item, itemIdx) => {
+                if (item.activity && item.activity.length < 2000) {
+                  translationTasks.push({
+                    path: ['itinerary', dayIdx, slot, itemIdx, 'activity'],
+                    text: item.activity
+                  });
+                }
+                if (item.area_and_transit && item.area_and_transit.length < 2000) {
+                  translationTasks.push({
+                    path: ['itinerary', dayIdx, slot, itemIdx, 'area_and_transit'],
+                    text: item.area_and_transit
+                  });
+                }
+              });
+            }
+          });
+        });
+      }
+
+      // Budget notes
+      if (Array.isArray(translatedPayload.budget?.notes)) {
+        translatedPayload.budget.notes.forEach((note, idx) => {
+          if (note && note.length < 2000) {
+            translationTasks.push({
+              path: ['budget', 'notes', idx],
+              text: note
+            });
+          }
+        });
+      }
+
+      // Logistics transport
+      if (Array.isArray(translatedPayload.logistics?.local_transport)) {
+        translatedPayload.logistics.local_transport.forEach((transport, idx) => {
+          if (transport && transport.length < 2000) {
+            translationTasks.push({
+              path: ['logistics', 'local_transport', idx],
+              text: transport
+            });
+          }
+        });
+      }
+
+      // Logistics notes
+      if (Array.isArray(translatedPayload.logistics?.notes)) {
+        translatedPayload.logistics.notes.forEach((note, idx) => {
+          if (note && note.length < 2000) {
+            translationTasks.push({
+              path: ['logistics', 'notes', idx],
+              text: note
+            });
+          }
+        });
+      }
+
+      // Tips - scams
+      if (Array.isArray(translatedPayload.tips?.scams)) {
+        translatedPayload.tips.scams.forEach((tip, idx) => {
+          if (tip && tip.length < 2000) {
+            translationTasks.push({
+              path: ['tips', 'scams', idx],
+              text: tip
+            });
+          }
+        });
+      }
+
+      // Tips - weather
+      if (Array.isArray(translatedPayload.tips?.weather)) {
+        translatedPayload.tips.weather.forEach((tip, idx) => {
+          if (tip && tip.length < 2000) {
+            translationTasks.push({
+              path: ['tips', 'weather', idx],
+              text: tip
+            });
+          }
+        });
+      }
+
+      // Packing list
+      if (Array.isArray(translatedPayload.packing)) {
+        translatedPayload.packing.forEach((item, idx) => {
+          if (item && item.length < 2000) {
+            translationTasks.push({
+              path: ['packing', idx],
+              text: item
+            });
+          }
+        });
+      }
+
+      console.log(`[Translation] Translating ${translationTasks.length} text fields for planner data (progressive)`);
+
+      // Translate fields in batches with progressive updates
+      const BATCH_SIZE = 3; // Translate 3 fields at a time for smoother visual progress
+      let completed = 0;
+
+      for (let i = 0; i < translationTasks.length; i += BATCH_SIZE) {
+        const batch = translationTasks.slice(i, i + BATCH_SIZE);
+        
+        // Translate batch in parallel
+        const batchResults = await Promise.all(
+          batch.map(task => 
+            translationService.translateText(task.text, targetLanguage, "en-IN")
+          )
+        );
+
+        // Apply translations to payload
+        batchResults.forEach((translatedText, batchIdx) => {
+          const { path } = batch[batchIdx];
+          let current = translatedPayload;
+          // Navigate to the correct nested position
+          for (let j = 0; j < path.length - 1; j++) {
+            current = current[path[j]];
+          }
+          current[path[path.length - 1]] = translatedText;
+        });
+
+        completed += batch.length;
+        
+        // Trigger progress update to show live translation
+        if (onProgressUpdate) {
+          onProgressUpdate(
+            JSON.parse(JSON.stringify(translatedPayload)), // Clone to avoid reference issues
+            completed,
+            translationTasks.length
+          );
+        }
+
+        // Small delay between batches to make progress visible (only if not last batch)
+        if (i + BATCH_SIZE < translationTasks.length) {
+          await new Promise(resolve => setTimeout(resolve, 100)); // 100ms delay
+        }
+      }
+
+      // Update state and sessionStorage with final result
+      const newTranslations = { ...messageTranslations, [cacheKey]: translatedPayload };
+      setMessageTranslations(newTranslations);
+      
+      try {
+        sessionStorage.setItem('message_translations', JSON.stringify(newTranslations));
+      } catch (error) {
+        console.error('Failed to cache planner translation:', error);
+      }
+
+      return translatedPayload;
+    } catch (error) {
+      console.error('Planner translation error:', error);
+      return originalPayload; // Return original on error
+    } finally {
+      setTranslatingMessageId(null);
+    }
+  };
+
+  const renderPlannerBubble = (payload, messageId) => {
     return (
-      <div className="space-y-3">
-        <div>
-          <p className="text-sm font-semibold text-gray-900">
-            Your itinerary ({days} days) · {destination}
-          </p>
-          <p className="text-xs text-gray-600">{dateRange}</p>
-        </div>
-
-        {Array.isArray(meta.clarifying_questions) &&
-          meta.clarifying_questions.length > 0 && (
-            <div className="rounded-xl border border-orange-100 bg-orange-50/70 p-3">
-              <p className="text-xs font-semibold text-orange-800">
-                Quick questions
-              </p>
-              <ul className="mt-1 list-disc pl-5 text-xs text-orange-900/90 space-y-1">
-                {meta.clarifying_questions.map((q, idx) => (
-                  <li key={idx}>{q}</li>
-                ))}
-              </ul>
-            </div>
-          )}
-
-        <details className="group rounded-xl border border-gray-200 bg-white/60 p-3">
-          <summary className="cursor-pointer select-none text-sm font-semibold text-gray-900">
-            Day-by-day plan
-            <span className="ml-2 text-xs font-normal text-gray-500 group-open:hidden">
-              (click to expand)
-            </span>
-          </summary>
-          <div className="mt-3 space-y-3">
-            {Array.isArray(payload.itinerary) &&
-            payload.itinerary.length > 0 ? (
-              payload.itinerary.map((d) => (
-                <div
-                  key={d.day}
-                  className="rounded-lg border border-gray-200 bg-white p-3"
-                >
-                  <p className="text-sm font-semibold text-orange-700">
-                    Day {d.day}
-                  </p>
-                  {["morning", "afternoon", "evening"].map((slot) => (
-                    <div key={slot} className="mt-2">
-                      <p className="text-xs font-semibold text-gray-700 capitalize">
-                        {slot}
-                      </p>
-                      <ul className="mt-1 space-y-1">
-                        {Array.isArray(d[slot]) && d[slot].length > 0 ? (
-                          d[slot].map((item, idx) => (
-                            <li key={idx} className="text-xs text-gray-700">
-                              <span className="font-semibold text-gray-900">
-                                {item.time || "NA"}
-                              </span>
-                              <span className="text-gray-500"> · </span>
-                              <span>{item.activity || "NA"}</span>
-                              {item.area_and_transit ? (
-                                <span className="text-gray-500">
-                                  {" "}
-                                  — {item.area_and_transit}
-                                </span>
-                              ) : null}
-                            </li>
-                          ))
-                        ) : (
-                          <li className="text-xs text-gray-500">NA</li>
-                        )}
-                      </ul>
-                    </div>
-                  ))}
-                </div>
-              ))
-            ) : (
-              <p className="text-xs text-gray-600">No itinerary returned.</p>
-            )}
-          </div>
-        </details>
-
-        <details className="group rounded-xl border border-gray-200 bg-white/60 p-3">
-          <summary className="cursor-pointer select-none text-sm font-semibold text-gray-900">
-            Budget, logistics & tips
-          </summary>
-          <div className="mt-3 grid gap-3 sm:grid-cols-2">
-            <div className="rounded-lg border border-gray-200 bg-white p-3">
-              <p className="text-xs font-semibold text-gray-800">Budget</p>
-              <p className="mt-1 text-xs text-gray-700">
-                {payload.budget?.currency || "NA"}{" "}
-                {payload.budget?.trip_estimate ?? "NA"}
-              </p>
-            </div>
-            <div className="rounded-lg border border-gray-200 bg-white p-3">
-              <p className="text-xs font-semibold text-gray-800">Transport</p>
-              <ul className="mt-1 list-disc pl-5 text-xs text-gray-700 space-y-1">
-                {Array.isArray(payload.logistics?.local_transport) &&
-                payload.logistics.local_transport.length > 0 ? (
-                  payload.logistics.local_transport.map((t, idx) => (
-                    <li key={idx}>{t}</li>
-                  ))
-                ) : (
-                  <li>NA</li>
-                )}
-              </ul>
-            </div>
-          </div>
-        </details>
-      </div>
+      <PlannerBubbleWithTranslation
+        messageId={messageId}
+        payload={payload}
+        translatePlannerData={translatePlannerData}
+        supportedLanguages={supportedLanguages}
+        translatingMessageId={translatingMessageId}
+      />
     );
   };
 
@@ -599,15 +1154,19 @@ export default function Itinerary() {
                         >
                           {m.type === "planner" ? (
                             <div className="text-gray-900">
-                              {renderPlannerBubble(m.data)}
+                              {renderPlannerBubble(m.data, m.id)}
                             </div>
+                          ) : !isUser ? (
+                            <MessageWithTranslation 
+                              messageId={m.id}
+                              content={m.content}
+                              renderWithLinks={renderWithLinks}
+                              translateMessage={translateMessage}
+                              supportedLanguages={supportedLanguages}
+                              translatingMessageId={translatingMessageId}
+                            />
                           ) : (
-                            <p
-                              className={
-                                "text-sm whitespace-pre-wrap " +
-                                (isUser ? "text-white" : "text-gray-800")
-                              }
-                            >
+                            <p className="text-sm whitespace-pre-wrap text-white leading-relaxed" style={{ lineHeight: '1.8' }}>
                               {renderWithLinks(m.content, isUser)}
                             </p>
                           )}
