@@ -149,7 +149,7 @@ const Profile = () => {
     return (
       <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
         <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-          <h1 className="text-2xl font-bold text-blue-600 mb-3 text-center">
+          <h1 className="text-2xl font-bold text-primary mb-3 text-center">
             Not signed in
           </h1>
           <p className="text-gray-600 text-center">
@@ -158,13 +158,13 @@ const Profile = () => {
           <div className="mt-6 flex gap-3">
             <button
               onClick={() => navigate("/")}
-              className="flex-1 py-2 border-2 border-blue-600 text-blue-600 rounded-xl font-bold"
+              className="flex-1 py-2 border-2 border-primary text-primary rounded-xl font-bold"
             >
               Go Home
             </button>
             <button
               onClick={() => navigate("/signin")}
-              className="flex-1 py-2 bg-blue-600 text-white rounded-xl font-bold"
+              className="flex-1 py-2 bg-primary text-white rounded-xl font-bold"
             >
               Sign In
             </button>
@@ -177,7 +177,7 @@ const Profile = () => {
   return (
     <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
-        <h1 className="text-2xl font-bold text-blue-600 mb-4 text-center">
+        <h1 className="text-2xl font-bold text-primary mb-4 text-center">
           {isSetupMode ? "Complete Your Profile" : "My Profile"}
         </h1>
 
@@ -208,7 +208,7 @@ const Profile = () => {
                 name="name"
                 value={formData.name}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-primary focus:outline-none"
                 placeholder="Enter your full name"
                 required
               />
@@ -226,7 +226,7 @@ const Profile = () => {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
-                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
+                className="w-full px-4 py-2 border-2 border-slate-200 rounded-xl focus:border-primary focus:outline-none"
                 placeholder="Enter your phone"
               />
             </div>
@@ -236,7 +236,7 @@ const Profile = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditing(false)}
-                  className="flex-1 py-2 border-2 border-blue-600 text-blue-600 rounded-xl font-bold"
+                  className="flex-1 py-2 border-2 border-primary text-primary rounded-xl font-bold"
                 >
                   Cancel
                 </button>
@@ -245,7 +245,7 @@ const Profile = () => {
               <button
                 type="submit"
                 disabled={saving}
-                className="flex-1 py-2 bg-blue-600 text-white rounded-xl font-bold disabled:opacity-60"
+                className="flex-1 py-2 bg-primary text-white rounded-xl font-bold disabled:opacity-60"
               >
                 {saving ? "Saving..." : "Save Profile"}
               </button>
@@ -295,14 +295,14 @@ const Profile = () => {
             <div className="mt-6 flex gap-3">
               <button
                 onClick={() => navigate("/map")}
-                className="flex-1 py-2 bg-blue-600 text-white rounded-xl font-bold"
+                className="flex-1 py-2 bg-primary text-white rounded-xl font-bold"
               >
                 Back to Map
               </button>
 
               <button
                 onClick={() => setIsEditing(true)}
-                className="flex-1 py-2 border-2 border-blue-600 text-blue-600 rounded-xl font-bold"
+                className="flex-1 py-2 border-2 border-primary text-primary rounded-xl font-bold"
               >
                 Edit
               </button>

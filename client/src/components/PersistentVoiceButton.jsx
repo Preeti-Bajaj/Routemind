@@ -28,12 +28,12 @@ const PersistentVoiceButton = () => {
         onClick={toggleVoiceNavigation}
         className={`fixed bottom-4 left-4 lg:bottom-6 lg:left-auto lg:right-6 z-50 w-11 h-11 lg:w-14 lg:h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 ${
           buttonState === 'off'
-            ? 'bg-slate-500 hover:bg-slate-600'
+            ? 'bg-sand0 hover:bg-slate-600'
             : buttonState === 'listening'
-            ? 'bg-blue-600 animate-pulse shadow-blue-600/50'
+            ? 'bg-primary animate-pulse shadow-primary-600/50'
             : buttonState === 'processing'
-            ? 'bg-blue-500 animate-spin-slow'
-            : 'bg-emerald-500 hover:bg-emerald-600 animate-breathing'
+            ? 'bg-primary-light animate-spin-slow'
+            : 'bg-primary hover:bg-primary-light animate-breathing'
         }`}
         title={isEnabled ? 'Voice navigation ON - Click to turn OFF' : 'Voice navigation OFF - Click to turn ON'}
       >
@@ -48,15 +48,15 @@ const PersistentVoiceButton = () => {
       {isEnabled && (
         <div className="fixed bottom-20 left-4 lg:bottom-24 lg:left-auto lg:right-6 z-50 bg-white rounded-lg shadow-lg px-4 py-2 text-sm font-medium">
           {isProcessing ? (
-            <span className="text-blue-600">Processing...</span>
+            <span className="text-primary">Processing...</span>
           ) : isListening ? (
             <span className="text-red-600 flex items-center gap-2">
               <span className="inline-block w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
               Listening
             </span>
           ) : (
-            <span className="text-blue-600 flex items-center gap-2">
-              <span className="inline-block w-2 h-2 bg-blue-600 rounded-full animate-pulse"></span>
+            <span className="text-primary flex items-center gap-2">
+              <span className="inline-block w-2 h-2 bg-primary rounded-full animate-pulse"></span>
               Ready
             </span>
           )}

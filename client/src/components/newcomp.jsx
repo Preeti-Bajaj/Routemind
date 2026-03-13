@@ -399,7 +399,7 @@ const MapPage = () => {
   return (
     <div className="w-full h-screen flex flex-col bg-slate-900 overflow-hidden">
       {/* Top Navigation Bar */}
-      <header className="bg-blue-600 text-white px-4 py-3 flex items-center justify-between shadow-lg z-50 safe-area-top">
+      <header className="bg-primary text-white px-4 py-3 flex items-center justify-between shadow-lg z-50 safe-area-top">
         <button 
           onClick={() => navigate('/')}
           className="p-2 -ml-2 hover:bg-white/20 rounded-full transition-colors"
@@ -440,7 +440,7 @@ const MapPage = () => {
           {/* Header */}
           <div className="bg-slate-800 p-6 text-white">
             <div className="flex items-center gap-4">
-              <div className="bg-blue-600 p-4 rounded-2xl shadow-lg">
+              <div className="bg-primary p-4 rounded-2xl shadow-lg">
                 <IconMapPin size={32} />
               </div>
               <div>
@@ -451,11 +451,11 @@ const MapPage = () => {
           </div>
 
           {/* Controls */}
-          <div className="p-5 space-y-4 border-b border-slate-100 bg-slate-50">
+          <div className="p-5 space-y-4 border-b border-slate-100 bg-sand">
             <button
               onClick={getCurrentLocation}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
+              className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-primary text-white rounded-2xl font-bold shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
             >
               <IconCurrentLocation size={22} className={isLoading ? 'animate-spin' : ''} />
               {currentUserLocation ? 'Location Set ✓' : 'Get My Location'}
@@ -470,7 +470,7 @@ const MapPage = () => {
                     onClick={() => searchNearbyTemples(city)}
                     className={`px-4 py-3.5 text-sm font-bold rounded-xl transition-all ${
                       searchCity === city
-                        ? 'bg-blue-600 text-white shadow-lg transform scale-105'
+                        ? 'bg-primary text-white shadow-lg transform scale-105'
                         : 'bg-white text-slate-700 hover:bg-slate-100 shadow border border-slate-200'
                     }`}
                   >
@@ -483,9 +483,9 @@ const MapPage = () => {
 
           {/* Results */}
           <div className="flex-1 overflow-y-auto">
-            <div className="p-4 bg-blue-50 border-b sticky top-0 z-10">
+            <div className="p-4 bg-sand border-b sticky top-0 z-10">
               <p className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <IconSearch size={18} className="text-blue-600" />
+                <IconSearch size={18} className="text-primary" />
                 Temples near {searchCity}
               </p>
             </div>
@@ -493,9 +493,9 @@ const MapPage = () => {
             {!isMapReady && (
               <div className="flex flex-col items-center justify-center py-20">
                 <div className="relative w-20 h-20">
-                  <div className="absolute inset-0 rounded-full border-4 border-blue-100"></div>
-                  <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
-                  <div className="absolute inset-3 rounded-full border-4 border-blue-500 border-t-transparent animate-spin" style={{animationDirection: 'reverse', animationDuration: '0.8s'}}></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-primary-100"></div>
+                  <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
+                  <div className="absolute inset-3 rounded-full border-4 border-primary border-t-transparent animate-spin" style={{animationDirection: 'reverse', animationDuration: '0.8s'}}></div>
                 </div>
                 <p className="mt-6 text-slate-600 font-semibold">Loading map...</p>
               </div>
@@ -527,11 +527,11 @@ const MapPage = () => {
             maxHeight: '65vh'
           }}
         >
-          <div className="bg-white rounded-t-[28px] shadow-2xl flex flex-col h-full border-t-4 border-blue-600">
+          <div className="bg-white rounded-t-[28px] shadow-2xl flex flex-col h-full border-t-4 border-primary">
             {/* Handle */}
             <button
               onClick={() => setIsBottomSheetOpen(!isBottomSheetOpen)}
-              className="w-full py-4 flex flex-col items-center gap-2 border-b border-slate-100 active:bg-slate-50"
+              className="w-full py-4 flex flex-col items-center gap-2 border-b border-slate-100 active:bg-sand"
             >
               <div className="w-14 h-1.5 bg-slate-300 rounded-full"></div>
               <div className="flex items-center gap-2 text-slate-600">
@@ -545,11 +545,11 @@ const MapPage = () => {
             {/* Content */}
             <div className="flex-1 overflow-hidden flex flex-col">
               {/* Controls */}
-              <div className="p-4 space-y-4 border-b border-slate-100 bg-slate-50">
+              <div className="p-4 space-y-4 border-b border-slate-100 bg-sand">
                 <button
                   onClick={getCurrentLocation}
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-blue-600 text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-transform disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-primary text-white rounded-2xl font-bold shadow-lg active:scale-95 transition-transform disabled:opacity-50"
                 >
                   <IconCurrentLocation size={22} className={isLoading ? 'animate-spin' : ''} />
                   {currentUserLocation ? 'Location Set ✓' : 'Get My Location'}
@@ -564,7 +564,7 @@ const MapPage = () => {
                         onClick={() => searchNearbyTemples(city)}
                         className={`px-3 py-3 text-sm font-bold rounded-xl transition-all ${
                           searchCity === city
-                            ? 'bg-blue-600 text-white shadow-lg'
+                            ? 'bg-primary text-white shadow-lg'
                             : 'bg-white text-slate-700 active:bg-slate-100 shadow border border-slate-200'
                         }`}
                       >
@@ -577,9 +577,9 @@ const MapPage = () => {
 
               {/* Results - Mobile shows same container via CSS */}
               <div className="flex-1 overflow-y-auto">
-                <div className="p-3 bg-blue-50 border-b sticky top-0 z-10">
+                <div className="p-3 bg-sand border-b sticky top-0 z-10">
                   <p className="text-sm font-bold text-slate-800 flex items-center gap-2">
-                    <IconSearch size={18} className="text-blue-600" />
+                    <IconSearch size={18} className="text-primary" />
                     Near {searchCity}
                   </p>
                 </div>
@@ -587,8 +587,8 @@ const MapPage = () => {
                 {!isMapReady && (
                   <div className="flex flex-col items-center justify-center py-12">
                     <div className="relative w-16 h-16">
-                      <div className="absolute inset-0 rounded-full border-4 border-blue-100"></div>
-                      <div className="absolute inset-0 rounded-full border-4 border-blue-600 border-t-transparent animate-spin"></div>
+                      <div className="absolute inset-0 rounded-full border-4 border-primary-100"></div>
+                      <div className="absolute inset-0 rounded-full border-4 border-primary border-t-transparent animate-spin"></div>
                     </div>
                     <p className="mt-4 text-slate-600 text-sm font-semibold">Loading...</p>
                   </div>
@@ -614,10 +614,10 @@ const MapPage = () => {
           >
             {/* Header */}
             <div className="bg-slate-800 p-6 text-white relative overflow-hidden">
-              <div className="absolute inset-0 bg-blue-600/10"></div>
+              <div className="absolute inset-0 bg-primary/10"></div>
               <div className="relative flex justify-between items-start">
                 <div className="flex items-start gap-4 flex-1">
-                  <div className="bg-blue-600 p-4 rounded-2xl shadow-lg">
+                  <div className="bg-primary p-4 rounded-2xl shadow-lg">
                     <span className="text-3xl">🕉️</span>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -640,9 +640,9 @@ const MapPage = () => {
             {/* Content */}
             <div className="flex-1 overflow-y-auto p-6 space-y-5">
               {/* Address Card */}
-              <div className="bg-slate-50 rounded-2xl p-5 border border-slate-200">
+              <div className="bg-sand rounded-2xl p-5 border border-slate-200">
                 <div className="flex items-start gap-3">
-                  <div className="bg-blue-100 p-2.5 rounded-xl text-blue-600">
+                  <div className="bg-sand p-2.5 rounded-xl text-primary">
                     <IconMapPin size={22} />
                   </div>
                   <div className="flex-1">
@@ -656,11 +656,11 @@ const MapPage = () => {
 
               {/* eLoc Card */}
               {locationDetails.eLoc && (
-                <div className="bg-blue-50 rounded-2xl p-5 border border-blue-200">
-                  <p className="text-xs font-black text-blue-600 uppercase tracking-widest mb-2">
+                <div className="bg-sand rounded-2xl p-5 border border-primary-200">
+                  <p className="text-xs font-black text-primary uppercase tracking-widest mb-2">
                     Digital Address (eLoc)
                   </p>
-                  <div className="bg-white rounded-xl p-4 border-2 border-blue-200 shadow-inner">
+                  <div className="bg-white rounded-xl p-4 border-2 border-primary-200 shadow-inner">
                     <code className="font-mono text-2xl font-black text-slate-800 tracking-widest">
                       {locationDetails.eLoc}
                     </code>

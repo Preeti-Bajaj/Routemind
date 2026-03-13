@@ -180,7 +180,7 @@ const FamilyTrackerPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-blue-50/30">
+    <div className="min-h-screen bg-sand/30">
       {/* Navbar */}
       <header className="p-4 md:px-10 flex items-center justify-between gap-4 bg-white sticky top-0 z-40 shadow-sm">
         <NavbarDemo />
@@ -193,7 +193,7 @@ const FamilyTrackerPage = () => {
           {distanceAlerts.map((alert) => (
             <div
               key={alert.id}
-              className="bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-4 animate-pulse"
+              className="bg-primary text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-4 animate-pulse"
             >
               <div className="flex-1">
                 <p className="font-bold">⚠️ Distance Alert</p>

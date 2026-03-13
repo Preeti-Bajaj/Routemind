@@ -176,18 +176,18 @@ function PlannerBubbleWithTranslation({ messageId, payload, translatePlannerData
 
       {/* Translation Progress Indicator */}
       {translationProgress && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+        <div className="bg-sand border border-primary-200 rounded-lg p-3">
           <div className="flex items-center justify-between mb-1">
-            <span className="text-xs font-medium text-blue-900">
+            <span className="text-xs font-medium text-primary-dark">
               ✨ Live translation in progress...
             </span>
-            <span className="text-xs text-blue-700">
+            <span className="text-xs text-primary-dark">
               {translationProgress.completed}/{translationProgress.total} fields
             </span>
           </div>
-          <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
+          <div className="w-full bg-primary-200 rounded-full h-2 overflow-hidden">
             <div 
-              className="bg-blue-500 h-full transition-all duration-300 ease-out"
+              className="bg-primary-light h-full transition-all duration-300 ease-out"
               style={{ 
                 width: `${(translationProgress.completed / translationProgress.total) * 100}%` 
               }}
@@ -205,11 +205,11 @@ function PlannerBubbleWithTranslation({ messageId, payload, translatePlannerData
 
       {Array.isArray(meta.clarifying_questions) &&
         meta.clarifying_questions.length > 0 && (
-          <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3">
-            <p className="text-xs font-semibold text-blue-800">
+          <div className="rounded-xl border border-primary-100 bg-sand/70 p-3">
+            <p className="text-xs font-semibold text-primary-dark">
               Quick questions
             </p>
-            <ul className="mt-2 list-disc pl-5 text-xs text-blue-900/90 space-y-2">
+            <ul className="mt-2 list-disc pl-5 text-xs text-primary-dark/90 space-y-2">
               {meta.clarifying_questions.map((q, idx) => (
                 <li key={idx} className="leading-relaxed" style={{ lineHeight: '1.6' }}>{q}</li>
               ))}
@@ -232,7 +232,7 @@ function PlannerBubbleWithTranslation({ messageId, payload, translatePlannerData
                 key={d.day}
                 className="rounded-lg border border-gray-200 bg-white p-3"
               >
-                <p className="text-sm font-semibold text-blue-700">
+                <p className="text-sm font-semibold text-primary-dark">
                   Day {d.day}
                 </p>
                 {["morning", "afternoon", "evening"].map((slot) => (
@@ -328,7 +328,7 @@ function TranslateButton({ selectedLang, showDropdown, setShowDropdown, handleTr
       <button
         onClick={() => setShowDropdown(!showDropdown)}
         disabled={translatingMessageId === messageId}
-        className="text-xs text-gray-500 hover:text-blue-600 transition flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 shadow-sm"
+        className="text-xs text-gray-500 hover:text-primary transition flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-primary-300 hover:bg-sand shadow-sm"
         title="Translate this message"
       >
         🌐 {supportedLanguages.find(l => l.code === selectedLang)?.name || 'Translate'}
@@ -341,13 +341,13 @@ function TranslateButton({ selectedLang, showDropdown, setShowDropdown, handleTr
             <button
               key={lang.code}
               onClick={() => handleTranslate(lang.code)}
-              className={`w-full text-left px-3 py-2.5 text-sm hover:bg-blue-50 transition-colors flex items-center gap-2 first:rounded-t-xl last:rounded-b-xl ${
-                selectedLang === lang.code ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-800 hover:text-blue-600'
+              className={`w-full text-left px-3 py-2.5 text-sm hover:bg-sand transition-colors flex items-center gap-2 first:rounded-t-xl last:rounded-b-xl ${
+                selectedLang === lang.code ? 'bg-sand text-primary-dark font-semibold' : 'text-gray-800 hover:text-primary'
               }`}
             >
               <span className="text-lg">{lang.flag}</span>
               <span className="flex-1">{lang.name}</span>
-              {selectedLang === lang.code && <span className="text-blue-600 font-bold">✓</span>}
+              {selectedLang === lang.code && <span className="text-primary font-bold">✓</span>}
             </button>
           ))}
         </div>
@@ -748,8 +748,8 @@ export default function Itinerary() {
           className={
             "underline decoration-dotted hover:decoration-solid font-medium " +
             (isUser
-              ? "text-blue-100 hover:text-white"
-              : "text-blue-600 hover:text-blue-800")
+              ? "text-primary-100 hover:text-white"
+              : "text-primary hover:text-primary-dark")
           }
         >
           {label}
@@ -1111,13 +1111,13 @@ export default function Itinerary() {
   };
 
   return (
-    <div className="min-h-screen bg-blue-50/40">
+    <div className="min-h-screen bg-sand/40">
       <NavbarDemo />
       <Header />
       <main className="mx-auto max-w-6xl px-4 sm:px-6 pb-16 pt-8 lg:pt-12 sm:pt-8 space-y-10">
         {/* Header */}
         <header className="space-y-3">
-          <p className="text-xs sm:text-sm uppercase tracking-wide text-blue-600 font-semibold">
+          <p className="text-xs sm:text-sm uppercase tracking-wide text-primary font-semibold">
             Itinerary AI
           </p>
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 leading-tight">
@@ -1135,7 +1135,7 @@ export default function Itinerary() {
           {/* Chat Box */}
           <div className="lg:col-span-2 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
             {/* Chat header */}
-            <div className="flex items-center justify-between gap-3 border-b border-gray-100 bg-blue-50 px-5 py-4 sm:px-6">
+            <div className="flex items-center justify-between gap-3 border-b border-gray-100 bg-sand px-5 py-4 sm:px-6">
               <div>
                 <p className="text-sm font-semibold text-gray-900">
                   Itinerary Assistant
@@ -1151,8 +1151,8 @@ export default function Itinerary() {
                   className={
                     "inline-flex items-center justify-center rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm transition disabled:opacity-60 " +
                     (mode === "planner"
-                      ? "border-blue-300 bg-blue-600 text-white hover:bg-blue-600"
-                      : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50")
+                      ? "border-primary-300 bg-primary text-white hover:bg-primary"
+                      : "border-gray-200 bg-white text-gray-800 hover:bg-sand")
                   }
                   aria-label="Toggle planner mode"
                   title={
@@ -1166,7 +1166,7 @@ export default function Itinerary() {
                 <button
                   onClick={resetChat}
                   disabled={loading}
-                  className="inline-flex items-center justify-center rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-lg border border-primary-200 bg-white px-3 py-2 text-xs font-semibold text-primary-dark shadow-sm transition hover:bg-sand disabled:opacity-60"
                   aria-label="Reset chat"
                 >
                   Reset
@@ -1189,13 +1189,13 @@ export default function Itinerary() {
                   <div className="mt-5 flex flex-col gap-2">
                     <button
                       onClick={() => switchToPlanner(true)}
-                      className="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 transition"
+                      className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary transition"
                     >
                       Yes, use my chat context
                     </button>
                     <button
                       onClick={() => switchToPlanner(false)}
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition"
+                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-sand transition"
                     >
                       No, start fresh
                     </button>
@@ -1214,15 +1214,15 @@ export default function Itinerary() {
             <div className="h-[52vh] sm:h-[56vh] overflow-y-auto px-4 py-5 sm:px-6 bg-white">
               {messages.length === 0 ? (
                 <div className="mx-auto max-w-xl">
-                  <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
-                    <p className="text-sm font-semibold text-blue-800">
+                  <div className="rounded-2xl border border-primary-100 bg-sand/60 p-4">
+                    <p className="text-sm font-semibold text-primary-dark">
                       Start here
                     </p>
-                    <p className="mt-1 text-sm text-blue-900/80">
+                    <p className="mt-1 text-sm text-primary-dark/80">
                       Tell me your dates, starting city, pace, and must-visit
                       places in Odisha.
                     </p>
-                    <p className="mt-2 text-xs text-blue-900/70">
+                    <p className="mt-2 text-xs text-primary-dark/70">
                       Example: “3 days in Bhubaneswar–Puri with elderly parents,
                       early mornings, minimal walking.”
                     </p>
@@ -1243,7 +1243,7 @@ export default function Itinerary() {
                           className={
                             "max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 shadow-sm border " +
                             (isUser
-                              ? "bg-blue-600 text-white border-blue-600"
+                              ? "bg-primary text-white border-primary"
                               : "bg-white text-gray-900 border-gray-200")
                           }
                         >
@@ -1268,7 +1268,7 @@ export default function Itinerary() {
                           <div
                             className={
                               "mt-2 text-[11px] " +
-                              (isUser ? "text-blue-50/90" : "text-gray-500")
+                              (isUser ? "text-primary-50/90" : "text-gray-500")
                             }
                           >
                             {formatTime(m.ts)}
@@ -1283,9 +1283,9 @@ export default function Itinerary() {
                       <div className="max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 shadow-sm border border-gray-200 bg-white">
                         <p className="text-sm text-gray-600">Thinking…</p>
                         <div className="mt-2 flex gap-1">
-                          <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary-300 animate-pulse" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary-300 animate-pulse" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-primary-300 animate-pulse" />
                         </div>
                       </div>
                     </div>
@@ -1322,7 +1322,7 @@ export default function Itinerary() {
                       }}
                       rows={1}
                       placeholder="Type your trip details…"
-                      className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-12 text-sm sm:text-base text-gray-800 shadow-inner focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
+                      className="w-full resize-none rounded-xl border border-gray-200 bg-sand px-4 py-3 pr-12 text-sm sm:text-base text-gray-800 shadow-inner focus:border-primary-400 focus:outline-none focus:ring-2 focus:ring-primary-100"
                       disabled={isRecording}
                     />
                     {/* Mic button inside textarea */}
@@ -1334,7 +1334,7 @@ export default function Itinerary() {
                         "absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-2 transition-all " +
                         (isRecording
                           ? "bg-red-500 text-white animate-pulse shadow-lg"
-                          : "bg-blue-100 text-blue-600 hover:bg-blue-200")
+                          : "bg-sand text-primary hover:bg-primary-200")
                       }
                       title={isRecording ? "Click to stop recording" : "Click to start voice input"}
                     >
@@ -1369,7 +1369,7 @@ export default function Itinerary() {
                         onClick={() =>
                           setPrompt((p) => (p ? `${p} ${tag}` : tag))
                         }
-                        className="rounded-full bg-blue-50 px-3 py-1 text-blue-700 border border-blue-100 hover:bg-blue-100"
+                        className="rounded-full bg-sand px-3 py-1 text-primary-dark border border-primary-100 hover:bg-sand"
                       >
                         {tag}
                       </button>
@@ -1381,7 +1381,7 @@ export default function Itinerary() {
                   <button
                     type="submit"
                     disabled={loading || !prompt.trim()}
-                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-primary disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {loading ? "Sending…" : "Send"}
                   </button>
@@ -1399,13 +1399,13 @@ export default function Itinerary() {
           <aside className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm flex flex-col h-full max-h-[85vh]">
             <div className="flex border-b border-gray-200 mb-4">
               <button 
-                className={`flex-1 pb-3 px-2 text-sm font-semibold transition-colors ${historyTab === 'chat' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`flex-1 pb-3 px-2 text-sm font-semibold transition-colors ${historyTab === 'chat' ? 'border-b-2 border-primary text-primary' : 'text-gray-500 hover:text-gray-700'}`}
                 onClick={() => setHistoryTab('chat')}
               >
                 Chat History
               </button>
               <button 
-                className={`flex-1 pb-3 px-2 text-sm font-semibold transition-colors ${historyTab === 'planner' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                className={`flex-1 pb-3 px-2 text-sm font-semibold transition-colors ${historyTab === 'planner' ? 'border-b-2 border-primary text-primary' : 'text-gray-500 hover:text-gray-700'}`}
                 onClick={() => setHistoryTab('planner')}
               >
                 Planner History
@@ -1421,12 +1421,12 @@ export default function Itinerary() {
                       onClick={() => loadChatSession(session.id)}
                       className={`w-full text-left p-4 rounded-xl transition-all border ${
                         chatId === session.id
-                          ? "bg-blue-50 border-blue-200 shadow-sm"
-                          : "bg-white border-gray-100 hover:bg-gray-50 hover:border-gray-300"
+                          ? "bg-sand border-primary-200 shadow-sm"
+                          : "bg-white border-gray-100 hover:bg-sand hover:border-gray-300"
                       }`}
                     >
                       <div className="flex justify-between items-start mb-1 gap-2">
-                        <p className={`font-semibold text-sm truncate flex-1 ${chatId === session.id ? "text-blue-700" : "text-gray-800"}`}>
+                        <p className={`font-semibold text-sm truncate flex-1 ${chatId === session.id ? "text-primary-dark" : "text-gray-800"}`}>
                           {session.title}
                         </p>
                       </div>
@@ -1436,7 +1436,7 @@ export default function Itinerary() {
                     </button>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-sm text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                  <div className="text-center py-8 text-sm text-gray-500 bg-sand rounded-xl border border-dashed border-gray-200">
                     No recent chat history in this session.
                   </div>
                 )
@@ -1449,12 +1449,12 @@ export default function Itinerary() {
                       onClick={() => loadPlannerSession(session.chat_id)}
                       className={`w-full text-left p-4 rounded-xl transition-all border ${
                         chatId === session.chat_id && mode === "planner"
-                          ? "bg-blue-50 border-blue-200 shadow-sm"
-                          : "bg-white border-gray-100 hover:bg-gray-50 hover:border-gray-300"
+                          ? "bg-sand border-primary-200 shadow-sm"
+                          : "bg-white border-gray-100 hover:bg-sand hover:border-gray-300"
                       }`}
                     >
                       <div className="flex justify-between items-start mb-1 gap-2">
-                        <p className={`font-semibold text-sm truncate flex-1 ${chatId === session.chat_id && mode === "planner" ? "text-blue-700" : "text-gray-800"}`}>
+                        <p className={`font-semibold text-sm truncate flex-1 ${chatId === session.chat_id && mode === "planner" ? "text-primary-dark" : "text-gray-800"}`}>
                           {session.destination} ({session.trip_length_days > 0 ? `${session.trip_length_days} Days` : 'Planning'})
                         </p>
                       </div>
@@ -1464,7 +1464,7 @@ export default function Itinerary() {
                     </button>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-sm text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                  <div className="text-center py-8 text-sm text-gray-500 bg-sand rounded-xl border border-dashed border-gray-200">
                     {userId === "guest" ? "Login to view planner history." : "No planner history found."}
                   </div>
                 )

@@ -555,7 +555,7 @@ const FamilyTracker = () => {
     return (
       <div className="max-w-4xl mx-auto p-6 md:pt-12 space-y-8">
         <div className="text-center space-y-3">
-          <h1 className="text-4xl md:text-5xl font-bold bg-blue-600 bg-clip-text text-transparent">Family Tracker</h1>
+          <h1 className="text-4xl md:text-5xl font-bold bg-primary bg-clip-text text-transparent">Family Tracker</h1>
           <p className="text-gray-600 text-lg max-w-xl mx-auto">
             Stay connected with your loved ones. Create a family group or join one using a family code.
           </p>
@@ -568,13 +568,13 @@ const FamilyTracker = () => {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <section className="bg-white p-8 rounded-3xl shadow-lg border border-blue-50 space-y-6 hover:shadow-xl transition-shadow">
-            <h2 className="text-2xl font-semibold text-blue-600">Create Family</h2>
+          <section className="bg-white p-8 rounded-3xl shadow-lg border border-primary-50 space-y-6 hover:shadow-xl transition-shadow">
+            <h2 className="text-2xl font-semibold text-primary">Create Family</h2>
 
             {!isCreatingFamily ? (
               <button
                 onClick={() => setIsCreatingFamily(true)}
-                className="w-full bg-blue-600 text-white px-4 py-3 rounded-2xl font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                className="w-full bg-primary text-white px-4 py-3 rounded-2xl font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all"
               >
                 Create New Family
               </button>
@@ -585,13 +585,13 @@ const FamilyTracker = () => {
                   placeholder="Family name"
                   value={familyName}
                   onChange={(e) => setFamilyName(e.target.value)}
-                  className="w-full px-4 py-3 border border-blue-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-4 py-3 border border-primary-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-primary"
                   required
                 />
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-2xl hover:shadow-md transition-all font-medium"
+                    className="flex-1 bg-primary text-white px-4 py-3 rounded-2xl hover:shadow-md transition-all font-medium"
                   >
                     Save
                   </button>
@@ -601,7 +601,7 @@ const FamilyTracker = () => {
                       setIsCreatingFamily(false);
                       setFamilyName("");
                     }}
-                    className="flex-1 bg-blue-50 text-blue-700 px-4 py-3 rounded-2xl hover:bg-blue-100 transition-colors font-medium"
+                    className="flex-1 bg-sand text-primary-dark px-4 py-3 rounded-2xl hover:bg-sand transition-colors font-medium"
                   >
                     Cancel
                   </button>
@@ -610,13 +610,13 @@ const FamilyTracker = () => {
             )}
           </section>
 
-          <section className="bg-white p-8 rounded-3xl shadow-lg border border-blue-50 space-y-6 hover:shadow-xl transition-shadow">
-            <h2 className="text-2xl font-semibold text-blue-600">Join Family</h2>
+          <section className="bg-white p-8 rounded-3xl shadow-lg border border-primary-50 space-y-6 hover:shadow-xl transition-shadow">
+            <h2 className="text-2xl font-semibold text-primary">Join Family</h2>
 
             {!isJoiningFamily ? (
               <button
                 onClick={() => setIsJoiningFamily(true)}
-                className="w-full border-2 border-blue-600 text-blue-600 px-4 py-3 rounded-2xl font-semibold hover:bg-blue-50 hover:-translate-y-0.5 transition-all"
+                className="w-full border-2 border-primary text-primary px-4 py-3 rounded-2xl font-semibold hover:bg-sand hover:-translate-y-0.5 transition-all"
               >
                 Join Existing Family
               </button>
@@ -627,14 +627,14 @@ const FamilyTracker = () => {
                   placeholder="Family code"
                   value={joinCode}
                   onChange={(e) => setJoinCode(e.target.value.toUpperCase())}
-                  className="w-full px-4 py-3 border border-blue-200 rounded-2xl uppercase focus:outline-none focus:ring-2 focus:ring-blue-600"
+                  className="w-full px-4 py-3 border border-primary-200 rounded-2xl uppercase focus:outline-none focus:ring-2 focus:ring-primary"
                   maxLength={6}
                   required
                 />
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="flex-1 bg-blue-600 text-white px-4 py-3 rounded-2xl hover:shadow-md transition-all font-medium"
+                    className="flex-1 bg-primary text-white px-4 py-3 rounded-2xl hover:shadow-md transition-all font-medium"
                   >
                     Join
                   </button>
@@ -644,7 +644,7 @@ const FamilyTracker = () => {
                       setIsJoiningFamily(false);
                       setJoinCode("");
                     }}
-                    className="flex-1 bg-blue-50 text-blue-700 px-4 py-3 rounded-2xl hover:bg-blue-100 transition-colors font-medium"
+                    className="flex-1 bg-sand text-primary-dark px-4 py-3 rounded-2xl hover:bg-sand transition-colors font-medium"
                   >
                     Cancel
                   </button>
@@ -677,7 +677,7 @@ const FamilyTracker = () => {
             </div>
           )}
 
-          <section className="bg-white rounded-3xl shadow-lg border border-blue-50 p-6 md:p-8 space-y-6">
+          <section className="bg-white rounded-3xl shadow-lg border border-primary-50 p-6 md:p-8 space-y-6">
             <div className="flex flex-wrap items-start justify-between gap-4">
               <div>
                 <h1 className="text-3xl font-bold">{family.familyName}</h1>
@@ -701,7 +701,7 @@ const FamilyTracker = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => fetchLatestFamilyLocations()}
-                  className="px-4 py-2 bg-blue-100 text-blue-700 font-medium rounded-xl hover:bg-blue-200 transition-colors"
+                  className="px-4 py-2 bg-sand text-primary-dark font-medium rounded-xl hover:bg-primary-200 transition-colors"
                 >
                   {polling ? "Refreshing..." : "Refresh Data"}
                 </button>
@@ -738,7 +738,7 @@ const FamilyTracker = () => {
                   className={`px-5 py-2.5 rounded-xl text-white font-medium transition-all ${
                     locationSharing
                       ? "bg-gray-700 hover:bg-gray-800"
-                      : "bg-blue-600 hover:shadow-md"
+                      : "bg-primary hover:shadow-md"
                   }`}
                 >
                   {locationSharing ? "Stop Sharing" : "Start Sharing"}
@@ -746,7 +746,7 @@ const FamilyTracker = () => {
 
                 <button
                   onClick={updateLocationNow}
-                  className="px-5 py-2.5 bg-blue-600 text-white font-medium rounded-xl hover:shadow-md transition-all"
+                  className="px-5 py-2.5 bg-primary text-white font-medium rounded-xl hover:shadow-md transition-all"
                 >
                   Update My Location Now
                 </button>
@@ -769,7 +769,7 @@ const FamilyTracker = () => {
             </section>
           )}
 
-          <section className="bg-white rounded-3xl shadow-lg border border-blue-50 p-6 md:p-8">
+          <section className="bg-white rounded-3xl shadow-lg border border-primary-50 p-6 md:p-8">
             <h2 className="text-2xl font-semibold mb-6 text-gray-800">
               Family Members ({family.members.length})
             </h2>
@@ -798,19 +798,19 @@ const FamilyTracker = () => {
                     key={member?.userId?._id}
                     className={`flex items-center justify-between p-4 border rounded-2xl transition-all hover:shadow-sm ${
                       isCurrentUser
-                        ? "bg-blue-50 border-blue-200"
-                        : "bg-white border-gray-100 hover:border-blue-100"
+                        ? "bg-sand border-primary-200"
+                        : "bg-white border-gray-100 hover:border-primary-100"
                     }`}
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center text-lg shadow-sm">
+                      <div className="w-12 h-12 rounded-full bg-primary-light text-white font-bold flex items-center justify-center text-lg shadow-sm">
                         {member?.userId?.name?.charAt(0)?.toUpperCase() || "?"}
                       </div>
                       <div>
                         <p className="font-semibold text-lg text-gray-800">
                           {member?.userId?.name || "Unknown"}
                           {isCurrentUser && (
-                            <span className="ml-2 text-blue-600">(You)</span>
+                            <span className="ml-2 text-primary">(You)</span>
                           )}
                           {member?.role === "admin" && (
                             <span className="ml-2 text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded">
@@ -826,7 +826,7 @@ const FamilyTracker = () => {
                           {isSharing && hasLocation && (
                             <span
                               className={
-                                isStale ? "text-blue-600" : "text-green-600"
+                                isStale ? "text-primary" : "text-green-600"
                               }
                             >
                               • {isStale ? "Stale" : "Fresh"}
@@ -846,7 +846,7 @@ const FamilyTracker = () => {
                       {!isCurrentUser && (
                         <button
                           onClick={() => openMemberMap(member)}
-                          className="px-4 py-2 bg-blue-100 text-blue-700 font-medium rounded-xl hover:bg-blue-200 transition-colors"
+                          className="px-4 py-2 bg-sand text-primary-dark font-medium rounded-xl hover:bg-primary-200 transition-colors"
                         >
                           View Map
                         </button>

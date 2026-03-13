@@ -459,20 +459,20 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 bg-gray-100 flex flex-col">
       {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 z-20 bg-white shadow-sm border-b border-blue-100">
+      <div className="absolute top-0 left-0 right-0 z-20 bg-white shadow-sm border-b border-primary-100">
         <div className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 max-w-7xl mx-auto w-full">
           <button
             onClick={onClose}
-            className="px-4 py-2 font-medium text-sm md:text-base rounded-xl border-2 border-blue-100 text-blue-700 hover:bg-blue-50 hover:border-blue-200 transition-colors"
+            className="px-4 py-2 font-medium text-sm md:text-base rounded-xl border-2 border-primary-100 text-primary-dark hover:bg-sand hover:border-primary-200 transition-colors"
           >
             ← Back
           </button>
-          <h1 className="text-lg md:text-xl font-bold bg-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-lg md:text-xl font-bold bg-primary bg-clip-text text-transparent">
             Live Tracker
           </h1>
           <button
             onClick={fetchMemberLatestLocation}
-            className="px-4 py-2 font-medium text-sm md:text-base rounded-xl bg-blue-600 text-white shadow hover:shadow-md hover:-translate-y-0.5 transition-all"
+            className="px-4 py-2 font-medium text-sm md:text-base rounded-xl bg-primary text-white shadow hover:shadow-md hover:-translate-y-0.5 transition-all"
           >
             Refresh
           </button>
@@ -482,7 +482,7 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
       {/* Stale location warning banner — shown over the map */}
       {tracking.isStale && tracking.isSharingLocation && (
         <div
-          className="absolute left-0 right-0 z-20 bg-blue-100 border-b border-blue-200 text-blue-800 text-sm font-medium text-center py-2 px-4 shadow-sm"
+          className="absolute left-0 right-0 z-20 bg-sand border-b border-primary-200 text-primary-dark text-sm font-medium text-center py-2 px-4 shadow-sm"
           style={{ top: "72px" }}
         >
           ⚠️ Location is stale — last update: {formatLastSeen()}
@@ -503,7 +503,7 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
       />
 
       {/* Bottom info panel */}
-      <div className="absolute left-0 right-0 bottom-0 z-20 bg-white/95 backdrop-blur-md border-t-2 border-blue-100 shadow-[0_-10px_30px_-15px_rgba(249,115,22,0.2)] rounded-t-3xl pt-2">
+      <div className="absolute left-0 right-0 bottom-0 z-20 bg-white/95 backdrop-blur-md border-t-2 border-primary-100 shadow-[0_-10px_30px_-15px_rgba(249,115,22,0.2)] rounded-t-3xl pt-2">
         <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-2"></div>
         <div className="p-5 md:p-6 max-w-5xl mx-auto space-y-5">
           <div className="flex items-center justify-between gap-4">
@@ -524,13 +524,13 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
                 <span
                   className={`px-3 py-1.5 rounded-full shadow-sm font-semibold ${
                     tracking.isStale
-                      ? "bg-blue-100 text-blue-800"
-                      : "bg-blue-100 text-blue-700"
+                      ? "bg-sand text-primary-dark"
+                      : "bg-sand text-primary-dark"
                   }`}
                 >
                   {tracking.isStale ? "⚠️ Stale" : "✓ Fresh"}
                 </span>
-                <span className="px-3 py-1.5 rounded-full bg-blue-50 text-blue-700">
+                <span className="px-3 py-1.5 rounded-full bg-sand text-primary-dark">
                   Auto-refresh active
                 </span>
               </div>
@@ -544,7 +544,7 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
                 }
               }}
               disabled={routeStatus === "loading" || tracking.latitude == null}
-              className="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold bg-blue-600 text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-all"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold bg-primary text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-all"
             >
               {routeStatus === "loading" ? (
                 <>
@@ -574,25 +574,25 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
           {/* Route info strip */}
           {routeStatus === "success" && routeInfo && (
             <div className="space-y-2">
-              <div className="flex flex-wrap items-center justify-between lg:justify-start gap-4 rounded-2xl bg-blue-50 border border-blue-100 px-4 py-3 text-sm shadow-sm">
+              <div className="flex flex-wrap items-center justify-between lg:justify-start gap-4 rounded-2xl bg-sand border border-primary-100 px-4 py-3 text-sm shadow-sm">
                 <div className="flex items-center gap-4">
-                  <span className="font-bold text-blue-700 flex items-center gap-1.5">
+                  <span className="font-bold text-primary-dark flex items-center gap-1.5">
                     <span className="text-xl">🚗</span> {routeInfo.distance} km
                   </span>
-                  <span className="w-1.5 h-1.5 bg-blue-300 rounded-full"></span>
-                  <span className="font-bold text-blue-700">
+                  <span className="w-1.5 h-1.5 bg-primary-300 rounded-full"></span>
+                  <span className="font-bold text-primary-dark">
                     ~{routeInfo.duration} min
                   </span>
                 </div>
                 <div className="flex items-center gap-4">
-                  <span className="w-1.5 h-1.5 bg-blue-300 rounded-full hidden sm:block"></span>
-                  <span className="text-blue-600 font-medium tracking-tight">
+                  <span className="w-1.5 h-1.5 bg-primary-300 rounded-full hidden sm:block"></span>
+                  <span className="text-primary font-medium tracking-tight">
                     your GPS ±{routeInfo.accuracy} m
                   </span>
                 </div>
               </div>
               {routeInfo.accuracyWeak && (
-                <div className="flex items-start gap-2 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl px-4 py-3 text-sm shadow-sm">
+                <div className="flex items-start gap-2 bg-sand border border-primary-200 text-primary-dark rounded-xl px-4 py-3 text-sm shadow-sm">
                   <span className="text-lg leading-none">⚠️</span>
                   <p className="font-medium">
                     Low GPS accuracy ({routeInfo.accuracy} m). The starting point may be approximate. Consider moving outdoors.

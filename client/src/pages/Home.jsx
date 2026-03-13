@@ -72,7 +72,7 @@ function RevealSection({ children, className = "", delay = 0 }) {
 /* ───────────── decorative heading underline ───────────── */
 function HeadingAccent({ className = "" }) {
   return (
-    <span className={`block mx-auto mt-4 h-1 w-16 rounded-full bg-blue-600 ${className}`} />
+    <span className={`block mx-auto mt-4 h-1 w-16 rounded-full bg-primary ${className}`} />
   );
 }
 
@@ -91,7 +91,7 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#f8faff] text-gray-800 overflow-x-hidden">
+    <div className="min-h-screen bg-sand-light text-gray-800 overflow-x-hidden">
       {/* ────── Navbar ────── */}
       <header className="p-4 md:px-10 flex items-center justify-between gap-4">
         <NavbarDemo />
@@ -101,22 +101,22 @@ const Home = () => {
       {/* ════════════════════ HERO ════════════════════ */}
       <section className="relative isolate flex flex-col-reverse lg:flex-row items-center justify-between gap-12 px-6 md:px-16 pt-12 pb-24 lg:py-36 overflow-hidden">
         {/* decorative blobs */}
-        <div className="pointer-events-none absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full bg-blue-100/30 blur-3xl" />
-        <div className="pointer-events-none absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-blue-100/20 blur-3xl" />
+        <div className="pointer-events-none absolute -top-32 -left-32 h-[500px] w-[500px] rounded-full bg-sand/30 blur-3xl" />
+        <div className="pointer-events-none absolute bottom-0 right-0 h-[400px] w-[400px] rounded-full bg-sand/20 blur-3xl" />
 
         {/* text */}
         <div className="relative z-10 lg:w-1/2 text-center lg:text-left space-y-7 max-w-xl mx-auto lg:mx-0">
-          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase text-blue-700 border border-blue-200">
+          <span className="inline-block px-4 py-1.5 rounded-full text-xs font-semibold tracking-widest uppercase text-primary-dark border border-primary-200">
             <TranslatableText textKey="hero_badge">🙏 Sacred Odisha Awaits</TranslatableText>
           </span>
 
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.1] text-gray-900">
             <TranslatableText textKey="hero_title">
               Odisha Pilgrim{" "}
-              <span className="relative inline-block text-blue-600">
+              <span className="relative inline-block text-primary">
                 Yatra
                 <svg className="absolute -bottom-2 left-0 w-full" viewBox="0 0 120 8" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path d="M2 5.5C20 2 40 2 60 4.5C80 7 100 3 118 5" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" className="animate-[draw_1s_ease-out_0.5s_forwards]" style={{ strokeDasharray: 200, strokeDashoffset: 200, animation: 'draw 1s ease-out 0.5s forwards' }} />
+                  <path d="M2 5.5C20 2 40 2 60 4.5C80 7 100 3 118 5" stroke="#4F46E5" strokeWidth="3" strokeLinecap="round" className="animate-[draw_1s_ease-out_0.5s_forwards]" style={{ strokeDasharray: 200, strokeDashoffset: 200, animation: 'draw 1s ease-out 0.5s forwards' }} />
                 </svg>
               </span>
             </TranslatableText>
@@ -135,16 +135,16 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
             <button
               onClick={() => navigate("/map")}
-              className="group relative px-8 py-3.5 bg-blue-600 text-white rounded-2xl font-semibold shadow-lg shadow-blue-300/40 hover:shadow-xl hover:shadow-blue-400/40 hover:bg-blue-700 hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+              className="group relative px-8 py-3.5 bg-primary text-white rounded-2xl font-semibold shadow-lg shadow-primary-300/40 hover:shadow-xl hover:shadow-primary-400/40 hover:bg-primary-light hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
             >
-              <span className="absolute inset-0 bg-blue-700 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              <span className="absolute inset-0 bg-primary-dark opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <span className="relative">
                 <TranslatableText textKey="btn_explore_temples">Explore Temples</TranslatableText>
               </span>
             </button>
             <button
               onClick={() => navigate("/itineraryai")}
-              className="px-8 py-3.5 border-2 border-blue-300 text-blue-700 rounded-2xl font-semibold hover:bg-blue-50 hover:border-blue-400 hover:-translate-y-0.5 transition-all duration-300"
+              className="px-8 py-3.5 border-2 border-primary-300 text-primary-dark rounded-2xl font-semibold hover:bg-sand hover:border-primary-400 hover:-translate-y-0.5 transition-all duration-300"
             >
               <TranslatableText textKey="btn_plan_yatra">Plan Your Yatra</TranslatableText>
             </button>
@@ -154,16 +154,16 @@ const Home = () => {
         {/* hero image */}
         <div className="relative z-10 lg:w-1/2 flex justify-center">
           {/* glow behind image */}
-          <div className="absolute inset-0 m-auto h-72 w-72 lg:h-96 lg:w-96 rounded-full bg-blue-200/30 blur-3xl" />
+          <div className="absolute inset-0 m-auto h-72 w-72 lg:h-96 lg:w-96 rounded-full bg-primary-200/30 blur-3xl" />
           <img
             src="https://phool.co/cdn/shop/articles/172017492135594_1024x1024.jpg?v=1726044181"
             alt="Jagannath Temple"
-            className="relative w-full max-w-sm lg:max-w-lg rounded-[2rem] shadow-2xl shadow-blue-900/15 object-cover ring-1 ring-blue-100 hover:scale-[1.02] transition-transform duration-700"
+            className="relative w-full max-w-sm lg:max-w-lg rounded-[2rem] shadow-2xl shadow-primary-900/15 object-cover ring-1 ring-primary-100 hover:scale-[1.02] transition-transform duration-700"
             style={{ transform: `translateY(${scrollY * 0.04}px)` }}
           />
           {/* floating stat badge */}
-          <div className="absolute -bottom-4 -left-2 sm:left-4 backdrop-blur-xl bg-white/80 border border-blue-100 rounded-2xl px-5 py-3 shadow-xl">
-            <p className="text-2xl font-bold text-blue-600">700+</p>
+          <div className="absolute -bottom-4 -left-2 sm:left-4 backdrop-blur-xl bg-white/80 border border-primary-100 rounded-2xl px-5 py-3 shadow-xl">
+            <p className="text-2xl font-bold text-primary">700+</p>
             <p className="text-xs text-gray-500 font-medium">Ancient Temples</p>
           </div>
         </div>
@@ -171,7 +171,7 @@ const Home = () => {
 
       {/* ════════════════════ STATS BAR ════════════════════ */}
       <RevealSection className="relative -mt-8 mx-4 md:mx-16 mb-16">
-        <div className="backdrop-blur-xl bg-white/70 border border-blue-100/60 rounded-3xl shadow-xl shadow-blue-100/30 px-6 py-8 sm:py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+        <div className="backdrop-blur-xl bg-white/70 border border-primary-100/60 rounded-3xl shadow-xl shadow-primary-100/30 px-6 py-8 sm:py-10 grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
           {[
             { value: 700, suffix: "+", label: "Historic Temples" },
             { value: 480, suffix: " km", label: "Coastline" },
@@ -179,7 +179,7 @@ const Home = () => {
             { value: 3, suffix: "", label: "UNESCO Sites" },
           ].map((stat, i) => (
             <div key={i}>
-              <p className="text-3xl sm:text-4xl font-extrabold text-blue-600">
+              <p className="text-3xl sm:text-4xl font-extrabold text-primary">
                 <AnimatedCounter target={stat.value} suffix={stat.suffix} />
               </p>
               <p className="mt-1 text-sm text-gray-500 font-medium">{stat.label}</p>
@@ -191,7 +191,7 @@ const Home = () => {
       {/* ════════════════════ WHY ODISHA ════════════════════ */}
       <section className="px-6 md:px-16 py-20">
         <RevealSection className="text-center max-w-2xl mx-auto mb-14">
-          <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-200 mb-4">
+          <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-sand text-primary border border-primary-200 mb-4">
             Destinations
           </span>
           <TranslatableText
@@ -219,23 +219,23 @@ const Home = () => {
               title: "Puri – The Sacred Dham",
               img: "https://assets.cntraveller.in/photos/685ba76e22966cd9daef4ba2/16:9/w_1024%2Cc_limit/GettyImages-509348753.jpg",
               desc: "One of the Char Dhams of India, famous for Lord Jagannath and the grand Rath Yatra festival.",
-              accent: "blue-600",
+              accent: "primary-600",
             },
             {
               title: "Konark – Sun Temple",
               img: "https://cdn.magicdecor.in/com/2023/02/29213046/image-1685112860-3601.jpg",
               desc: "A UNESCO World Heritage Site, known for its chariot-shaped design and intricate carvings.",
-              accent: "blue-600",
+              accent: "primary-600",
             },
             {
               title: "Bhubaneswar – City of Temples",
               img: "https://imagedelivery.net/dmcxpiIQ1lAgOmi_eg0IzQ/89cbb154-4e1b-4661-c4e7-392de0a2a200/public",
               desc: "Home to more than 700 temples blending ancient architecture with modern culture.",
-              accent: "blue-500",
+              accent: "primary-500",
             },
           ].map((place, i) => (
             <RevealSection key={i} delay={i * 120}>
-              <div className="group relative rounded-3xl overflow-hidden bg-white shadow-lg shadow-gray-200/60 hover:shadow-2xl hover:shadow-blue-200/40 transition-all duration-500 hover:-translate-y-1">
+              <div className="group relative rounded-3xl overflow-hidden bg-white shadow-lg shadow-gray-200/60 hover:shadow-2xl hover:shadow-primary-200/40 transition-all duration-500 hover:-translate-y-1">
                 <div className="relative overflow-hidden h-60">
                   <img
                     src={place.img}
@@ -248,7 +248,7 @@ const Home = () => {
                   <TranslatableText
                     textKey={`place_title_${i}`}
                     tag="h3"
-                    className="text-xl font-bold text-gray-900 group-hover:text-blue-600 transition-colors"
+                    className="text-xl font-bold text-gray-900 group-hover:text-primary transition-colors"
                   >
                     {place.title}
                   </TranslatableText>
@@ -269,26 +269,26 @@ const Home = () => {
       </section>
 
       {/* ════════════════════ BEACHES ════════════════════ */}
-      <section className="relative px-6 md:px-16 py-24 bg-blue-50/60 overflow-hidden">
+      <section className="relative px-6 md:px-16 py-24 bg-sand/60 overflow-hidden">
         {/* decorative circle */}
-        <div className="pointer-events-none absolute -right-40 top-10 h-[420px] w-[420px] rounded-full bg-blue-200/20 blur-3xl" />
+        <div className="pointer-events-none absolute -right-40 top-10 h-[420px] w-[420px] rounded-full bg-primary-200/20 blur-3xl" />
 
         <RevealSection className="relative z-10 grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div className="relative group">
             <img
               src="https://static-blog.treebo.com/wp-content/uploads/2023/05/Aryapalli-Beach-1024x675.jpg"
               alt="Puri Beach"
-              className="rounded-3xl shadow-lg shadow-blue-200/30 object-cover h-80 md:h-96 w-full group-hover:scale-[1.01] transition-transform duration-700"
+              className="rounded-3xl shadow-lg shadow-primary-200/30 object-cover h-80 md:h-96 w-full group-hover:scale-[1.01] transition-transform duration-700"
             />
             {/* small floating card */}
-            <div className="absolute bottom-4 right-4 backdrop-blur-xl bg-white/80 border border-blue-100 rounded-xl px-4 py-2.5 shadow-lg">
-              <p className="text-sm font-bold text-blue-600">🌅 Chandrabhaga</p>
+            <div className="absolute bottom-4 right-4 backdrop-blur-xl bg-white/80 border border-primary-100 rounded-xl px-4 py-2.5 shadow-lg">
+              <p className="text-sm font-bold text-primary">🌅 Chandrabhaga</p>
               <p className="text-[11px] text-gray-500">Best sunrise in East India</p>
             </div>
           </div>
 
           <div className="space-y-5 max-w-lg">
-            <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-200">
+            <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-sand text-primary border border-primary-200">
               Beaches
             </span>
             <TranslatableText
@@ -309,7 +309,7 @@ const Home = () => {
             </TranslatableText>
             <button
               onClick={() => navigate("/map")}
-              className="inline-flex items-center gap-2 text-blue-600 font-semibold text-sm hover:text-blue-700 hover:gap-3 transition-all duration-300"
+              className="inline-flex items-center gap-2 text-primary font-semibold text-sm hover:text-primary-dark hover:gap-3 transition-all duration-300"
             >
               Explore on map
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -323,7 +323,7 @@ const Home = () => {
       {/* ════════════════════ CULTURE & FOOD ════════════════════ */}
       <section className="px-6 md:px-16 py-24">
         <RevealSection className="text-center max-w-2xl mx-auto mb-14">
-          <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-blue-50 text-blue-600 border border-blue-200 mb-4">
+          <span className="inline-block px-3 py-1 rounded-full text-[11px] font-semibold uppercase tracking-widest bg-sand text-primary border border-primary-200 mb-4">
             Heritage
           </span>
           <TranslatableText
@@ -358,7 +358,7 @@ const Home = () => {
             },
           ].map((item, i) => (
             <RevealSection key={i} delay={i * 120}>
-              <div className="group relative rounded-3xl overflow-hidden bg-white shadow-lg shadow-gray-200/60 hover:shadow-2xl hover:shadow-blue-200/40 transition-all duration-500 hover:-translate-y-1">
+              <div className="group relative rounded-3xl overflow-hidden bg-white shadow-lg shadow-gray-200/60 hover:shadow-2xl hover:shadow-primary-200/40 transition-all duration-500 hover:-translate-y-1">
                 <div className="relative overflow-hidden h-56">
                   <img
                     src={item.img}
@@ -375,7 +375,7 @@ const Home = () => {
                   <TranslatableText
                     textKey={`culture_title_${i}`}
                     tag="h3"
-                    className="text-lg font-bold text-gray-900 group-hover:text-blue-600 transition-colors"
+                    className="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors"
                   >
                     {item.title}
                   </TranslatableText>
@@ -397,7 +397,7 @@ const Home = () => {
       <RevealSection>
         <section className="relative mx-4 md:mx-16 mb-20 rounded-[2rem] overflow-hidden">
           {/* gradient background */}
-          <div className="absolute inset-0 bg-blue-600 " />
+          <div className="absolute inset-0 bg-primary " />
           {/* subtle pattern */}
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -414,7 +414,7 @@ const Home = () => {
             <TranslatableText
               textKey="cta_desc"
               tag="p"
-              className="mt-4 text-blue-100/90 max-w-xl mx-auto text-base sm:text-lg leading-relaxed"
+              className="mt-4 text-primary-100/90 max-w-xl mx-auto text-base sm:text-lg leading-relaxed"
             >
               Plan your Odisha pilgrimage and explore temples, beaches, and
               culture in one divine journey.
@@ -423,7 +423,7 @@ const Home = () => {
             <div className="mt-8 flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate("/itineraryai")}
-                className="group px-10 py-3.5 bg-white text-blue-600 rounded-2xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
+                className="group px-10 py-3.5 bg-white text-primary rounded-2xl font-bold shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300"
               >
                 <TranslatableText textKey="btn_start_yatra">Start Your Yatra</TranslatableText>
                 <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
@@ -444,7 +444,7 @@ const Home = () => {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left">
             <p className="font-bold text-lg text-gray-900 flex items-center gap-2 justify-center md:justify-start">
-              <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600 text-white text-sm">🙏</span>
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-primary text-white text-sm">🙏</span>
               Route Mind
             </p>
             <TranslatableText
@@ -457,13 +457,13 @@ const Home = () => {
           </div>
 
           <div className="flex gap-6 text-sm text-gray-400">
-            <button onClick={() => navigate("/map")} className="hover:text-blue-600 transition-colors">
+            <button onClick={() => navigate("/map")} className="hover:text-primary transition-colors">
               Map
             </button>
-            <button onClick={() => navigate("/itineraryai")} className="hover:text-blue-600 transition-colors">
+            <button onClick={() => navigate("/itineraryai")} className="hover:text-primary transition-colors">
               Itinerary AI
             </button>
-            <button onClick={() => navigate("/family-tracker")} className="hover:text-blue-600 transition-colors">
+            <button onClick={() => navigate("/family-tracker")} className="hover:text-primary transition-colors">
               Family Tracker
             </button>
           </div>

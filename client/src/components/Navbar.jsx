@@ -148,14 +148,14 @@ export function NavbarDemo() {
               <>
                 <button
                   onClick={() => navigate("/signin")}
-                  className="px-6 py-2 border-2 border-blue-600 text-blue-600 font-bold rounded-xl"
+                  className="px-6 py-2 border-2 border-primary text-primary font-bold rounded-xl"
                 >
                   Sign In
                 </button>
 
                 <button
                   onClick={() => navigate("/signup")}
-                  className="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl"
+                  className="px-6 py-2 bg-primary text-white font-bold rounded-xl"
                 >
                   Sign Up
                 </button>

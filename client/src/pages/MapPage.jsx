@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { IconMapPin, IconX, IconRoute, IconCurrentLocation, IconSearch, IconChevronDown, IconChevronUp, IconAlertCircle, IconCheck, IconHome, IconNavigation } from '@tabler/icons-react';
+import { IconMapPin, IconX, IconRoute, IconCurrentLocation, IconSearch, IconChevronDown, IconChevronUp, IconAlertCircle, IconCheck, IconNavigation, IconArrowLeft, IconInfoCircle } from '@tabler/icons-react';
 import { useNavigate } from 'react-router-dom';
 import { NavbarDemo } from '../components/Navbar';
 import TranslatableText from '../components/TranslatableText';
@@ -10,8 +10,8 @@ const MapPage = () => {
   const navigate = useNavigate();
   const { translateText, currentLanguage } = useDynamicTranslation();
   const [selectedLocation, setSelectedLocation] = useState(null);
-  const [showDetailModal, setShowDetailModal] = useState(false);
-  const [locationDetails, setLocationDetails] = useState(null);
+  const [activeView, setActiveView] = useState('search'); // 'search' or 'details'
+  const [placeDetailsData, setPlaceDetailsData] = useState(null);
   const [currentUserLocation, setCurrentUserLocation] = useState(null);
   const [currentLocationMarker, setCurrentLocationMarker] = useState(null);
   const [isMapReady, setIsMapReady] = useState(false);
@@ -24,6 +24,7 @@ const MapPage = () => {
   const mapInstanceRef = useRef(null);
   const nearbyPluginRef = useRef(null);
   const directionPluginRef = useRef(null);
+  const selectedMarkerRef = useRef(null);
   const nearbyContainerRef = useRef(null);
   const isInitialized = useRef(false);
   const lastSearchCity = useRef(null);
@@ -115,7 +116,7 @@ const MapPage = () => {
 
       console.log('Loading Mappls plugins...');
       const pluginScript = document.createElement('script');
-      pluginScript.src = `https://sdk.mappls.com/map/sdk/plugins?v=3.0&libraries=direction,nearby&access_token=${MAPPLS_KEY}`;
+      pluginScript.src = `https://sdk.mappls.com/map/sdk/plugins?v=3.0&libraries=direction,nearby,getPinDetails,pinMarker&access_token=${MAPPLS_KEY}`;
       pluginScript.async = true;
       pluginScript.onload = () => {
         console.log('Mappls plugins loaded');
@@ -321,6 +322,93 @@ const MapPage = () => {
     }
   };
 
+  // ─── Marker Management Helpers ───────────────────────────────
+  const clearNearbyMarkers = () => {
+    // 1. Try the official .remove() on the nearby plugin ref
+    if (nearbyPluginRef.current) {
+      try {
+        if (typeof nearbyPluginRef.current.remove === 'function') {
+          nearbyPluginRef.current.remove();
+        }
+      } catch (e) {
+        console.warn('nearbyPluginRef.remove() failed:', e);
+      }
+      nearbyPluginRef.current = null;
+    }
+    // 2. Brute-force: remove all Mappls-generated marker elements from the map DOM
+    //    The nearby plugin injects markers as img elements inside the map container
+    if (mapContainerRef.current) {
+      const mapEl = mapContainerRef.current;
+      // Mappls markers are wrapped in divs with specific classes
+      const markerEls = mapEl.querySelectorAll(
+        '.leaflet-marker-icon, .leaflet-marker-shadow, .mappls-marker, [class*="marker"]'
+      );
+      markerEls.forEach(el => {
+        // Don't remove elements we explicitly placed (user location marker etc.)
+        if (!el.closest('#user-location-marker-wrapper')) {
+          try { el.remove(); } catch(e) {}
+        }
+      });
+    }
+    // 3. Clear the Mappls popup overlays too
+    const popups = document.querySelectorAll('.leaflet-popup, .mappls-popup');
+    popups.forEach(p => { try { p.remove(); } catch(e) {} });
+  };
+
+  const clearSelectedMarker = () => {
+    if (selectedMarkerRef.current) {
+      try {
+        if (typeof selectedMarkerRef.current.remove === 'function') {
+          selectedMarkerRef.current.remove();
+        }
+      } catch (e) {
+        console.warn('selectedMarkerRef.remove() failed:', e);
+      }
+      selectedMarkerRef.current = null;
+    }
+  };
+
+  const showSelectedTempleMarker = (loc) => {
+    clearSelectedMarker();
+
+    if (!mapInstanceRef.current || !window.mappls) return;
+
+    // Use pinMarker plugin if eLoc available and plugin is loaded
+    if (loc.eLoc && window.mappls.pinMarker) {
+      selectedMarkerRef.current = window.mappls.pinMarker(
+        {
+          map: mapInstanceRef.current,
+          pin: [loc.eLoc],
+          popupHtml: [
+            `<div style="padding:6px 4px;font-size:13px;font-weight:600">${loc.name}</div>`
+          ],
+          icon: {
+            url: 'https://apis.mappls.com/map_v3/1.png',
+            width: 35,
+            height: 45
+          }
+        },
+        (markerData) => {
+          console.log('pinMarker placed for:', loc.eLoc, markerData);
+        }
+      );
+    } else {
+      // Fallback: plain Marker from lat/lng
+      selectedMarkerRef.current = new window.mappls.Marker({
+        map: mapInstanceRef.current,
+        position: { lat: loc.lat, lng: loc.lng },
+        title: loc.name
+      });
+    }
+  };
+
+  const focusTempleOnMap = (loc) => {
+    if (!mapInstanceRef.current) return;
+    mapInstanceRef.current.setCenter({ lat: loc.lat, lng: loc.lng });
+    mapInstanceRef.current.setZoom(16);
+  };
+  // ────────────────────────────────────────────────────────────────
+
   const searchNearbyTemples = (city) => {
     if (!mapInstanceRef.current || !window.mappls || !window.mappls.nearby) {
       console.error('Map or nearby plugin not ready');
@@ -342,15 +430,10 @@ const MapPage = () => {
     console.log(`Searching temples near ${city}...`);
     setSearchCity(city);
 
+    // Clean up existing nearby markers
+    clearNearbyMarkers();
     if (nearbyContainerRef.current) {
       nearbyContainerRef.current.innerHTML = '';
-    }
-    if (nearbyPluginRef.current && nearbyPluginRef.current.remove) {
-      try {
-        nearbyPluginRef.current.remove();
-      } catch (e) {
-        console.log('Could not remove previous nearby:', e);
-      }
     }
 
     const options = {
@@ -363,7 +446,30 @@ const MapPage = () => {
       click_callback: function(d) {
         if (d) {
           console.log('Clicked location:', d);
-          const loc = {
+          setIsLoading(true);
+          showNotification('Loading place details...', 'info');
+
+          // Step 1: Remove ALL nearby markers from the map
+          clearNearbyMarkers();
+
+          // Step 2: Remove any previous selected marker
+          clearSelectedMarker();
+
+          const showTempleDetails = (loc) => {
+            setIsLoading(false);
+            setSelectedLocation(loc);
+            setPlaceDetailsData(loc);
+            setActiveView('details');
+
+            // Step 3: Show only the selected temple marker
+            showSelectedTempleMarker(loc);
+
+            // Step 4: Zoom/fly to the selected temple
+            focusTempleOnMap(loc);
+          };
+
+          // Build base location from nearby click data
+          const baseLoc = {
             name: d.placeName,
             address: d.placeAddress,
             city: city,
@@ -372,9 +478,31 @@ const MapPage = () => {
             lng: parseFloat(d.longitude),
             type: d.type || 'Temple'
           };
-          setSelectedLocation(loc);
-          setLocationDetails(loc);
-          setShowDetailModal(true);
+
+          // Try to enrich with getPinDetails
+          if (window.mappls && window.mappls.getPinDetails) {
+            window.mappls.getPinDetails({ pin: d.eLoc }, (data) => {
+              if (data && data.data && data.data.length > 0) {
+                const details = data.data[0];
+                showTempleDetails({
+                  ...baseLoc,
+                  name: details.poi || details.placeName || baseLoc.name,
+                  address: details.address || details.placeAddress || baseLoc.address,
+                  eLoc: details.eLoc || baseLoc.eLoc,
+                  lat: parseFloat(details.latitude || d.latitude),
+                  lng: parseFloat(details.longitude || d.longitude),
+                  type: details.type || baseLoc.type,
+                  phone: details.phone,
+                  email: details.email,
+                  website: details.website
+                });
+              } else {
+                showTempleDetails(baseLoc);
+              }
+            });
+          } else {
+            showTempleDetails(baseLoc);
+          }
         }
       }
     };
@@ -532,6 +660,116 @@ const MapPage = () => {
     );
   };
 
+  const PlaceDetailsContent = () => {
+    if (!placeDetailsData) return null;
+    
+    return (
+      <div className="animate-slide-down bg-white min-h-full">
+        {/* Back Button & Header */}
+        <div className="sticky top-0 bg-white z-20 p-4 border-b border-slate-200 flex items-center gap-3 shadow-sm">
+          <button 
+            onClick={() => {
+              // Step 1: Remove the selected temple marker
+              clearSelectedMarker();
+
+              // Step 2: Remove any active direction route from the map
+              if (directionPluginRef.current) {
+                try {
+                  if (typeof directionPluginRef.current.remove === 'function') {
+                    directionPluginRef.current.remove();
+                  }
+                } catch (e) {
+                  console.warn('Could not remove direction route:', e);
+                }
+                directionPluginRef.current = null;
+              }
+
+              // Step 3: Reset searchCity tracker so nearby search re-runs
+              lastSearchCity.current = null;
+
+              // Step 4: Switch view back to search list
+              setActiveView('search');
+
+              // Step 5: Re-run nearby search to restore all markers
+              searchNearbyTemples(searchCity);
+            }}
+            className="p-2 hover:bg-slate-100 rounded-full transition-colors flex-shrink-0"
+          >
+            <IconArrowLeft size={20} className="text-slate-700" />
+          </button>
+          <div className="flex-1 min-w-0">
+            <h3 className="font-semibold text-slate-900 truncate">{placeDetailsData.name}</h3>
+            <p className="text-xs text-slate-500 truncate">{placeDetailsData.city}</p>
+          </div>
+        </div>
+        
+        <div className="p-5 space-y-6">
+          {/* Main Info */}
+          <div className="flex items-start gap-4">
+            <div className="w-16 h-16 rounded-xl bg-orange-50 text-orange-600 flex items-center justify-center border border-orange-200 flex-shrink-0 shadow-sm">
+              <span className="text-3xl">🕉️</span>
+            </div>
+            <div>
+              <p className="text-sm font-medium text-slate-800 leading-relaxed">
+                {placeDetailsData.address}
+              </p>
+              {placeDetailsData.eLoc && (
+                <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 rounded text-xs font-semibold border border-blue-200">
+                  <IconMapPin size={14} />
+                  eLoc: {placeDetailsData.eLoc}
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <button
+              onClick={() => showRoute(placeDetailsData)}
+              disabled={isLoading || !currentUserLocation}
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#1d4ed8] text-white rounded-lg font-semibold shadow-sm hover:bg-[#1e40af] transition-colors disabled:opacity-50 text-sm"
+            >
+              <IconRoute size={18} />
+              <TranslatableText textKey={currentUserLocation ? 'get_directions' : 'set_location_first'}>
+                {currentUserLocation ? 'Get Directions' : 'Set Location'}
+              </TranslatableText>
+            </button>
+          </div>
+
+          <div className="h-px bg-slate-200 w-full" />
+
+          {/* Additional contact info from Mappls API */}
+          {(placeDetailsData.phone || placeDetailsData.website || placeDetailsData.email) && (
+            <div className="space-y-3">
+              <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
+                <IconInfoCircle size={18} className="text-blue-600" />
+                Contact Info
+              </h4>
+              {placeDetailsData.phone && (
+                <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <span className="text-base">📞</span>
+                  <p className="text-sm font-medium text-slate-800">{placeDetailsData.phone}</p>
+                </div>
+              )}
+              {placeDetailsData.email && (
+                <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <span className="text-base">✉️</span>
+                  <p className="text-sm font-medium text-slate-800">{placeDetailsData.email}</p>
+                </div>
+              )}
+              {placeDetailsData.website && (
+                <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
+                  <span className="text-base">🌐</span>
+                  <a href={placeDetailsData.website} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-blue-600 underline break-all">{placeDetailsData.website}</a>
+                </div>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full h-screen flex flex-col overflow-hidden bg-white text-slate-900">
       {/* Top Navigation Bar */}
@@ -618,37 +856,41 @@ const MapPage = () => {
               </div>
 
               {/* Results */}
-              <div className="flex-1 overflow-y-auto bg-white">
-                <div className="p-4 bg-white border-b border-slate-200 sticky top-0 z-10">
-                  <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                    <IconSearch size={18} className="text-blue-600" />
-                    <TranslatableText textKey="temples_near">Temples near</TranslatableText> {searchCity}
-                  </p>
-                  <TranslatableText textKey="tap_place_list" tag="p" className="mt-1 text-xs text-slate-500">
-                    Tap a place in the list to view details
-                  </TranslatableText>
-                </div>
-
-                {!isMapReady && (
-                  <div className="flex flex-col items-center justify-center py-20">
-                    <div className="relative w-16 h-16">
-                      <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
-                      <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
-                    </div>
-                    <TranslatableText textKey="preparing_map" tag="p" className="mt-6 text-slate-600 font-medium">
-                      Preparing map…
+              <div className="flex-1 overflow-y-auto bg-white relative">
+                <div style={{ display: activeView === 'search' ? 'block' : 'none' }}>
+                  <div className="p-4 bg-white border-b border-slate-200 sticky top-0 z-10">
+                    <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                      <IconSearch size={18} className="text-blue-600" />
+                      <TranslatableText textKey="temples_near">Temples near</TranslatableText> {searchCity}
+                    </p>
+                    <TranslatableText textKey="tap_place_list" tag="p" className="mt-1 text-xs text-slate-500">
+                      Tap a place in the list to view details
                     </TranslatableText>
                   </div>
-                )}
 
-                {/* Desktop nearby results - only visible on lg+ */}
-                <div className="hidden lg:block p-3">
-                  <div className="w-full"
-                    id="nearby_search_results"
-                    ref={nearbyContainerRef}
-                    suppressHydrationWarning
-                  />
+                  {!isMapReady && (
+                    <div className="flex flex-col items-center justify-center py-20">
+                      <div className="relative w-16 h-16">
+                        <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+                        <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                      </div>
+                      <TranslatableText textKey="preparing_map" tag="p" className="mt-6 text-slate-600 font-medium">
+                        Preparing map…
+                      </TranslatableText>
+                    </div>
+                  )}
+
+                  {/* Desktop nearby results - only visible on lg+ */}
+                  <div className="hidden lg:block p-3">
+                    <div className="w-full"
+                      id="nearby_search_results"
+                      ref={nearbyContainerRef}
+                      suppressHydrationWarning
+                    />
+                  </div>
                 </div>
+
+                {activeView === 'details' && <PlaceDetailsContent />}
               </div>
             </div>
           </div>
@@ -725,136 +967,50 @@ const MapPage = () => {
                 </div>
               </div>
 
-              {/* Results - Mobile shows nearby search results */}
-              <div className="flex-1 overflow-y-auto">
-                <div className="p-3 bg-white border-b border-slate-200 sticky top-0 z-10">
-                  <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                    <IconSearch size={18} className="text-blue-600" />
-                    <TranslatableText textKey="near_city">
-                      Near
-                    </TranslatableText> {searchCity}
-                  </p>
-                  <TranslatableText textKey="tap_result" tag="p" className="mt-1 text-xs text-slate-500">
-                    Tap a result to open details
-                  </TranslatableText>
-                </div>
-                
-                {!isMapReady && (
-                  <div className="flex flex-col items-center justify-center py-12">
-                    <div className="relative w-14 h-14">
-                      <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
-                      <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
-                    </div>
-                    <TranslatableText textKey="loading" tag="p" className="mt-4 text-slate-600 text-sm font-medium">
-                      Loading…
+              {/* Results - Mobile */}
+              <div className="flex-1 overflow-y-auto relative bg-white">
+                <div style={{ display: activeView === 'search' ? 'block' : 'none' }}>
+                  <div className="p-3 bg-white border-b border-slate-200 sticky top-0 z-10">
+                    <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
+                      <IconSearch size={18} className="text-blue-600" />
+                      <TranslatableText textKey="near_city">
+                        Near
+                      </TranslatableText> {searchCity}
+                    </p>
+                    <TranslatableText textKey="tap_result" tag="p" className="mt-1 text-xs text-slate-500">
+                      Tap a result to open details
                     </TranslatableText>
                   </div>
-                )}
-                
-                {/* Mobile shows the same nearby results - Mappls injects here on mobile */}
-                <div className="p-3 lg:hidden">
-                  <div 
-                    id="nearby_search_results"
-                    suppressHydrationWarning
-                  />
+                  
+                  {!isMapReady && (
+                    <div className="flex flex-col items-center justify-center py-12">
+                      <div className="relative w-14 h-14">
+                        <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
+                        <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                      </div>
+                      <TranslatableText textKey="loading" tag="p" className="mt-4 text-slate-600 text-sm font-medium">
+                        Loading…
+                      </TranslatableText>
+                    </div>
+                  )}
+                  
+                  {/* Mobile shows the same nearby results - Mappls injects here on mobile */}
+                  <div className="p-3 lg:hidden">
+                    <div 
+                      id="nearby_search_results"
+                      suppressHydrationWarning
+                    />
+                  </div>
                 </div>
+
+                {activeView === 'details' && <PlaceDetailsContent />}
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      {/* Detail Modal */}
-      {showDetailModal && locationDetails && (
-        <div className="fixed inset-0 bg-black/55 flex items-end lg:items-center justify-center z-50 p-0 lg:p-6">
-          <div
-            className="bg-white w-full lg:max-w-md shadow-[0_18px_45px_rgba(2,6,23,0.22)] overflow-hidden flex flex-col max-h-[85vh] lg:max-h-[80vh] border border-slate-200"
-            style={{ animation: 'slideUp 0.24s ease-out' }}
-          >
-            {/* Header */}
-            <div className="p-6 bg-slate-900 text-white">
-              <div className="flex justify-between items-start">
-                <div className="relative flex items-start gap-3 flex-1">
-                  <div className="h-11 w-11 bg-blue-200 text-slate-900 flex items-center justify-center border border-blue-300">
-                    <span className="text-2xl">🕉️</span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <h2 className="text-lg font-semibold mb-1 leading-tight truncate">{locationDetails.name}</h2>
-                    <p className="text-slate-200/90 text-xs truncate">{locationDetails.city}, Odisha</p>
-                  </div>
-                </div>
-                <button
-                  onClick={() => {
-                    setShowDetailModal(false);
-                    setLocationDetails(null);
-                  }}
-                  className="bg-white/10 hover:bg-white/20 p-2 transition-colors flex-shrink-0 ml-3"
-                  aria-label="Close detail"
-                >
-                  <IconX size={20} />
-                </button>
-              </div>
-            </div>
-
-            {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6 space-y-5">
-              {/* Address Card */}
-              <div className="p-5 border border-slate-200 bg-white">
-                <div className="flex items-start gap-3">
-                  <div className="bg-blue-100 p-2.5 text-blue-800 border border-blue-200">
-                    <IconMapPin size={20} />
-                  </div>
-                  <div className="flex-1">
-                    <TranslatableText textKey="address_label" tag="p" className="text-xs font-semibold text-slate-500 uppercase tracking-[0.15em] mb-1">
-                      Address
-                    </TranslatableText>
-                    <p className="text-slate-800 font-medium leading-relaxed">
-                      {locationDetails.address || `${locationDetails.city}, Odisha, India`}
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              {/* eLoc Card */}
-              {locationDetails.eLoc && (
-                <div className="p-5 border border-blue-200 bg-blue-50">
-                  <TranslatableText textKey="digital_address" tag="p" className="text-xs font-semibold text-blue-700 uppercase tracking-[0.18em] mb-2">
-                    Digital Address (eLoc)
-                  </TranslatableText>
-                  <div className="bg-white p-4 border border-blue-200">
-                    <code className="font-mono text-xl font-semibold text-slate-900 tracking-widest">
-                      {locationDetails.eLoc}
-                    </code>
-                  </div>
-                </div>
-              )}
-
-              {/* Action Buttons */}
-              <div className="space-y-3 pt-2">
-                <button
-                  onClick={() => {
-                    setShowDetailModal(false);
-                    showRoute(locationDetails);
-                  }}
-                  disabled={isLoading || !currentUserLocation}
-                  className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-[#1d4ed8] text-white font-semibold text-base shadow-sm hover:bg-[#1e40af] transition-colors disabled:opacity-50"
-                >
-                  <IconRoute size={22} />
-                  <TranslatableText textKey={currentUserLocation ? 'get_directions' : 'set_location_first'}>
-                    {currentUserLocation ? 'Get directions' : 'Set location first'}
-                  </TranslatableText>
-                </button>
-                
-                {!currentUserLocation && (
-                  <TranslatableText textKey="tap_location_icon" tag="p" className="text-center text-sm text-slate-500">
-                    Tap the location icon in header to enable routing
-                  </TranslatableText>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
+      {/* Detail Modal is completely removed in favor of embedded PlaceDetailsContent */}
 
       {/* CSS Animations */}
       <style>{`

@@ -272,7 +272,7 @@ const FamilyMap = ({ member, onClose }) => {
             fitBounds: true,
             connector: true,
             strokeWidth: 6,
-            routeColor: "#3B82F6",
+            routeColor: "#6366F1",
             ccpIconWidth: 50,
           };
 
@@ -322,7 +322,7 @@ const FamilyMap = ({ member, onClose }) => {
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
       {/* Stale location warning banner */}
       {isStale && (
-        <div className="absolute top-0 left-0 right-0 z-20 bg-blue-100 border-b border-blue-200 text-blue-800 text-sm font-medium text-center py-2 px-4 shadow-sm">
+        <div className="absolute top-0 left-0 right-0 z-20 bg-sand border-b border-primary-200 text-primary-dark text-sm font-medium text-center py-2 px-4 shadow-sm">
           ⚠️ Location data is stale — member may have stopped sharing or lost
           signal
         </div>
@@ -333,7 +333,7 @@ const FamilyMap = ({ member, onClose }) => {
         className={`absolute left-0 right-0 z-10 p-4 max-w-7xl mx-auto w-full transition-all duration-300 ${isStale ? "top-8" : "top-0"}`}
       >
         <div
-          className={`bg-white/95 backdrop-blur-md shadow-lg rounded-2xl p-4 md:px-6 md:py-4 flex flex-wrap gap-4 justify-between items-center border border-white/40 ${isStale ? "border-2 border-blue-300" : ""}`}
+          className={`bg-white/95 backdrop-blur-md shadow-lg rounded-2xl p-4 md:px-6 md:py-4 flex flex-wrap gap-4 justify-between items-center border border-white/40 ${isStale ? "border-2 border-primary-300" : ""}`}
         >
           
           <div>
@@ -342,13 +342,13 @@ const FamilyMap = ({ member, onClose }) => {
               {/* <span
                 className={
                   status.includes("Live")
-                    ? "text-blue-600 font-semibold flex items-center gap-1.5"
+                    ? "text-primary font-semibold flex items-center gap-1.5"
                     : status.includes("⚠️")
-                      ? "text-blue-600 font-semibold flex items-center gap-1.5"
+                      ? "text-primary font-semibold flex items-center gap-1.5"
                       : "text-gray-500 font-medium"
                 }
               >
-                {status.includes("Live") && <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>}
+                {status.includes("Live") && <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>}
                 {status}
               </span> */}
               {metrics.distance && (
@@ -361,7 +361,7 @@ const FamilyMap = ({ member, onClose }) => {
           </div>
           <button
             onClick={onClose}
-            className="bg-white border-2 border-blue-100 hover:bg-blue-50 hover:border-blue-200 text-blue-700 px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow"
+            className="bg-white border-2 border-primary-100 hover:bg-sand hover:border-primary-200 text-primary-dark px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow"
           >
             ✕ Close
           </button>
@@ -376,7 +376,7 @@ const FamilyMap = ({ member, onClose }) => {
 
       {/* Footer Legend */}
       <div className="absolute bottom-6 left-0 right-0 z-10 p-4 max-w-fit mx-auto w-full">
-        <div className="bg-white/95 backdrop-blur-md shadow-xl rounded-2xl border border-blue-50 px-6 py-4 flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 hover:shadow-2xl transition-shadow">
+        <div className="bg-white/95 backdrop-blur-md shadow-xl rounded-2xl border border-primary-50 px-6 py-4 flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 hover:shadow-2xl transition-shadow">
           <div className="flex items-center gap-2.5">
             <span className="flex items-center justify-center w-6 h-6 bg-red-100 rounded-full">
               <span className="inline-block w-2.5 h-2.5 bg-red-500 rounded-full"></span>
@@ -387,8 +387,8 @@ const FamilyMap = ({ member, onClose }) => {
           </div>
           <div className="w-px h-6 bg-gray-200 hidden sm:block"></div>
           <div className="flex items-center gap-2.5">
-            <span className="flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full">
-              <span className="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full"></span>
+            <span className="flex items-center justify-center w-6 h-6 bg-sand rounded-full">
+              <span className="inline-block w-2.5 h-2.5 bg-primary-light rounded-full"></span>
             </span>
             <span className="text-sm font-semibold text-gray-700">You <span className="text-gray-400 font-medium text-xs">(Static)</span></span>
           </div>
