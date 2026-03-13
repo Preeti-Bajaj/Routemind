@@ -147,7 +147,7 @@ const Profile = () => {
 
   if (!currentUser) {
     return (
-      <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
+      <div className="min-h-screen bg-sand flex justify-center items-center p-4">
         <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
           <h1 className="text-2xl font-bold text-primary mb-3 text-center">
             Not signed in
@@ -175,7 +175,7 @@ const Profile = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex justify-center items-center p-4">
+    <div className="min-h-screen bg-sand flex justify-center items-center p-4">
       <div className="bg-white shadow-xl rounded-2xl p-8 w-full max-w-md">
         <h1 className="text-2xl font-bold text-primary mb-4 text-center">
           {isSetupMode ? "Complete Your Profile" : "My Profile"}

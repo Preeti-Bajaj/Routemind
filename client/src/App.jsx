@@ -30,7 +30,7 @@ export default function App() {
     <TranslationProvider>
       <Router>
         <VoiceNavigationProvider>
-          <div className="min-h-screen bg-gray-100">
+          <div className="min-h-screen bg-sand-light">
             <Routes>
               <Route path="/" element={<Home />} />
               <Route path="/signup" element={<SignUp />} />

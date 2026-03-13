@@ -19,7 +19,7 @@ const MapPage = () => {
   const [isBottomSheetOpen, setIsBottomSheetOpen] = useState(true);
   const [notification, setNotification] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
-  
+
   const mapContainerRef = useRef(null);
   const mapInstanceRef = useRef(null);
   const nearbyPluginRef = useRef(null);
@@ -62,7 +62,7 @@ const MapPage = () => {
       }
 
       const existingSDK = document.querySelector('script[src*="sdk.mappls.com/map/sdk/web"]');
-      
+
       if (existingSDK) {
         console.log('Mappls SDK script exists, waiting for it to load...');
         const checkReady = setInterval(() => {
@@ -152,7 +152,7 @@ const MapPage = () => {
 
       // Find clickable elements (a, button) and their text content
       const clickableElements = element.querySelectorAll('a, button, [onclick]');
-      
+
       for (const el of clickableElements) {
         // Get only direct text content, not nested elements
         const textNodes = Array.from(el.childNodes).filter(
@@ -161,7 +161,7 @@ const MapPage = () => {
 
         for (const textNode of textNodes) {
           const originalText = textNode.textContent.trim();
-          
+
           // Skip if already cached
           if (translationCache.has(originalText)) {
             const translatedText = translationCache.get(originalText);
@@ -210,7 +210,7 @@ const MapPage = () => {
 
       for (const textNode of nonClickableNodes) {
         const originalText = textNode.textContent.trim();
-        
+
         if (translationCache.has(originalText)) {
           const translatedText = translationCache.get(originalText);
           textNode.textContent = textNode.textContent.replace(originalText, translatedText);
@@ -234,13 +234,13 @@ const MapPage = () => {
     const observer = new MutationObserver((mutations) => {
       // Clear previous timeout
       clearTimeout(translationTimeout);
-      
+
       // Wait longer (1.5s) to ensure Mappls has fully set up event handlers
       translationTimeout = setTimeout(() => {
-        const hasNewContent = mutations.some(mutation => 
+        const hasNewContent = mutations.some(mutation =>
           Array.from(mutation.addedNodes).some(node => node.nodeType === Node.ELEMENT_NODE)
         );
-        
+
         if (hasNewContent) {
           console.log('Translating Mappls content after delay...');
           translateMaplsText(targetDiv);
@@ -276,7 +276,7 @@ const MapPage = () => {
       console.error('Map container not ready');
       return;
     }
-    
+
     if (!window.mappls || !window.mappls.Map) {
       console.error('Mappls SDK not ready');
       return;
@@ -307,7 +307,7 @@ const MapPage = () => {
         console.log('Map load event fired!');
         mapInstanceRef.current = map;
         setIsMapReady(true);
-        
+
         if (window.mappls && window.mappls.nearby) {
           console.log('Nearby plugin available, starting search...');
           searchNearbyTemples('Bhubaneswar');
@@ -346,13 +346,13 @@ const MapPage = () => {
       markerEls.forEach(el => {
         // Don't remove elements we explicitly placed (user location marker etc.)
         if (!el.closest('#user-location-marker-wrapper')) {
-          try { el.remove(); } catch(e) {}
+          try { el.remove(); } catch (e) { }
         }
       });
     }
     // 3. Clear the Mappls popup overlays too
     const popups = document.querySelectorAll('.leaflet-popup, .mappls-popup');
-    popups.forEach(p => { try { p.remove(); } catch(e) {} });
+    popups.forEach(p => { try { p.remove(); } catch (e) { } });
   };
 
   const clearSelectedMarker = () => {
@@ -443,7 +443,7 @@ const MapPage = () => {
       refLocation: [coords.lat, coords.lng],
       fitbounds: true,
       geolocation: true,
-      click_callback: function(d) {
+      click_callback: function (d) {
         if (d) {
           console.log('Clicked location:', d);
           setIsLoading(true);
@@ -507,16 +507,16 @@ const MapPage = () => {
       }
     };
 
-    window.mappls.nearby(options, function(data) {
+    window.mappls.nearby(options, function (data) {
       console.log('Nearby search callback - results:', data);
-      
+
       if (data && data.error === 'error-auth-failed') {
         console.error('Auth failed - check API key whitelisting and quotas');
         showNotification('Search failed. Please try again.', 'error');
         lastSearchCity.current = null;
         return;
       }
-      
+
       nearbyPluginRef.current = data;
       if (data && data.data && data.data.length > 0) {
         showNotification(`Found ${data.data.length} temples near ${city}`, 'success');
@@ -536,14 +536,14 @@ const MapPage = () => {
     }
 
     let startPoint, endPoint;
-    
+
     if (currentUserLocation.lat && currentUserLocation.lng) {
       startPoint = `${currentUserLocation.lat},${currentUserLocation.lng}`;
     } else {
       showNotification('Invalid current location', 'error');
       return;
     }
-    
+
     if (destination.eLoc) {
       endPoint = destination.eLoc;
       console.log('Using eLoc for routing:', endPoint);
@@ -564,7 +564,7 @@ const MapPage = () => {
 
     try {
       if (directionPluginRef.current && directionPluginRef.current.remove) {
-        try { directionPluginRef.current.remove(); } catch (e) {}
+        try { directionPluginRef.current.remove(); } catch (e) { }
       }
 
       const directionOptions = {
@@ -579,9 +579,9 @@ const MapPage = () => {
         search: false
       };
 
-      window.mappls.direction(directionOptions, function(data) {
+      window.mappls.direction(directionOptions, function (data) {
         setIsLoading(false);
-        
+
         if (!data || data.error) {
           console.error('Direction failed:', data);
           if (data && data.error === 'error-auth-failed') {
@@ -594,7 +594,7 @@ const MapPage = () => {
 
         console.log('Direction success:', data);
         directionPluginRef.current = data;
-        
+
         if (data.routes && data.routes.length > 0) {
           const route = data.routes[0];
           const distance = (route.distance / 1000).toFixed(1);
@@ -631,7 +631,7 @@ const MapPage = () => {
 
         if (mapInstanceRef.current && window.mappls) {
           if (currentLocationMarker) {
-            try { currentLocationMarker.remove(); } catch (e) {}
+            try { currentLocationMarker.remove(); } catch (e) { }
           }
 
           const marker = new window.mappls.Marker({
@@ -662,12 +662,12 @@ const MapPage = () => {
 
   const PlaceDetailsContent = () => {
     if (!placeDetailsData) return null;
-    
+
     return (
       <div className="animate-slide-down bg-white min-h-full">
         {/* Back Button & Header */}
         <div className="sticky top-0 bg-white z-20 p-4 border-b border-slate-200 flex items-center gap-3 shadow-sm">
-          <button 
+          <button
             onClick={() => {
               // Step 1: Remove the selected temple marker
               clearSelectedMarker();
@@ -702,7 +702,7 @@ const MapPage = () => {
             <p className="text-xs text-slate-500 truncate">{placeDetailsData.city}</p>
           </div>
         </div>
-        
+
         <div className="p-5 space-y-6">
           {/* Main Info */}
           <div className="flex items-start gap-4">
@@ -714,7 +714,7 @@ const MapPage = () => {
                 {placeDetailsData.address}
               </p>
               {placeDetailsData.eLoc && (
-                <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 rounded text-xs font-semibold border border-blue-200">
+                <div className="mt-3 inline-flex items-center gap-1.5 px-2.5 py-1 bg-primary-50 text-primary-700 rounded text-xs font-semibold border border-primary-200">
                   <IconMapPin size={14} />
                   eLoc: {placeDetailsData.eLoc}
                 </div>
@@ -727,7 +727,7 @@ const MapPage = () => {
             <button
               onClick={() => showRoute(placeDetailsData)}
               disabled={isLoading || !currentUserLocation}
-              className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#1d4ed8] text-white rounded-lg font-semibold shadow-sm hover:bg-[#1e40af] transition-colors disabled:opacity-50 text-sm"
+              className="flex-1 flex items-center justify-center gap-2 py-3.5 bg-[#4F46E5] text-white rounded-lg font-semibold shadow-sm hover:bg-[#6366F1] transition-colors disabled:opacity-50 text-sm"
             >
               <IconRoute size={18} />
               <TranslatableText textKey={currentUserLocation ? 'get_directions' : 'set_location_first'}>
@@ -742,7 +742,7 @@ const MapPage = () => {
           {(placeDetailsData.phone || placeDetailsData.website || placeDetailsData.email) && (
             <div className="space-y-3">
               <h4 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-                <IconInfoCircle size={18} className="text-blue-600" />
+                <IconInfoCircle size={18} className="text-primary" />
                 Contact Info
               </h4>
               {placeDetailsData.phone && (
@@ -760,7 +760,7 @@ const MapPage = () => {
               {placeDetailsData.website && (
                 <div className="flex items-center gap-3 p-3 bg-slate-50 border border-slate-200 rounded-xl">
                   <span className="text-base">🌐</span>
-                  <a href={placeDetailsData.website} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-blue-600 underline break-all">{placeDetailsData.website}</a>
+                  <a href={placeDetailsData.website} target="_blank" rel="noopener noreferrer" className="text-sm font-medium text-primary underline break-all">{placeDetailsData.website}</a>
                 </div>
               )}
             </div>
@@ -781,13 +781,12 @@ const MapPage = () => {
       {/* Notification Toast */}
       {notification && (
         <div
-          className={`absolute top-[76px] sm:top-[84px] left-3 right-3 sm:left-6 sm:right-6 z-50 mx-auto max-w-xl p-3.5 border bg-white shadow-md flex items-center gap-3 animate-slide-down ${
-            notification.type === 'error'
+          className={`absolute top-[76px] sm:top-[84px] left-3 right-3 sm:left-6 sm:right-6 z-50 mx-auto max-w-xl p-3.5 border bg-white shadow-md flex items-center gap-3 animate-slide-down ${notification.type === 'error'
               ? 'bg-red-50 border-red-200 text-red-800'
               : notification.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-white border-slate-200 text-slate-800'
-          }`}
+                ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
+                : 'bg-white border-slate-200 text-slate-800'
+            }`}
         >
           {notification.type === 'error' && <IconAlertCircle size={22} />}
           {notification.type === 'success' && <IconCheck size={22} />}
@@ -798,7 +797,7 @@ const MapPage = () => {
 
       {/* Main Content */}
       <div className="flex-1 lg:mt-4 flex flex-col lg:flex-row relative overflow-hidden">
-        
+
         {/* Desktop Sidebar */}
         <div className="hidden lg:flex lg:w-lg ml-16 flex-col z-20">
           <div className="h-full py-4 pl-4">
@@ -806,32 +805,35 @@ const MapPage = () => {
               {/* Header */}
               <div className="p-6 border-b border-slate-200 bg-white">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 bg-blue-100 text-blue-900 flex items-center justify-center border border-blue-200">
+                  <div className="h-12 w-12 bg-primary-100 text-primary-900 flex items-center justify-center border border-primary-200">
                     <IconMapPin size={26} />
                   </div>
-                  <div>
-                    <TranslatableText textKey="map_title" tag="h2" className="text-xl font-semibold text-slate-900">
-                      Explore Odisha
-                    </TranslatableText>
-                    <TranslatableText textKey="map_subtitle" tag="p" className="text-sm text-slate-500">
-                      Temples and shrines near you
-                    </TranslatableText>
+                  <div className="grid grid-cols-4 w-full">
+                    <div className="col-span-2">
+                      <TranslatableText textKey="map_title" tag="h2" className="text-xl font-semibold text-slate-900">
+                        Explore Odisha
+                      </TranslatableText>
+                      <TranslatableText textKey="map_subtitle" tag="p" className="text-sm text-slate-500">
+                        Temples and shrines near you
+                      </TranslatableText>
+                    </div>
+                    <button
+                      onClick={getCurrentLocation}
+                      disabled={isLoading}
+                      className="w-full flex col-span-2 rounded-xl items-center justify-center gap-3 px-2 py-3 bg-[#4F46E5] text-white font-semibold shadow-sm hover:bg-[#6366F1] transition-colors disabled:opacity-50"
+                    >
+                      <IconCurrentLocation size={20} className={isLoading ? 'animate-spin' : ''} />
+                      <TranslatableText textKey={currentUserLocation ? 'location_ready' : 'use_my_location'}>
+                        {currentUserLocation ? 'Location ready' : 'Use my location'}
+                      </TranslatableText>
+                    </button>
                   </div>
                 </div>
               </div>
 
               {/* Controls */}
               <div className="p-5 space-y-4 border-b border-slate-200/60 bg-white">
-                <button
-                  onClick={getCurrentLocation}
-                  disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#1d4ed8] text-white font-semibold shadow-sm hover:bg-[#1e40af] transition-colors disabled:opacity-50"
-                >
-                  <IconCurrentLocation size={20} className={isLoading ? 'animate-spin' : ''} />
-                  <TranslatableText textKey={currentUserLocation ? 'location_ready' : 'use_my_location'}>
-                    {currentUserLocation ? 'Location ready' : 'Use my location'}
-                  </TranslatableText>
-                </button>
+
 
                 <div>
                   <TranslatableText textKey="choose_city" tag="p" className="text-xs font-semibold text-slate-500 mb-3 uppercase tracking-[0.2em]">
@@ -842,11 +844,10 @@ const MapPage = () => {
                       <button
                         key={city}
                         onClick={() => searchNearbyTemples(city)}
-                        className={`flex-1 px-3 py-2.5 text-sm font-semibold border border-transparent transition-colors ${
-                          searchCity === city
-                            ? 'bg-white text-slate-900 border-slate-200'
+                        className={`flex-1 px-3 py-2.5 text-sm font-semibold border border-transparent transition-colors ${searchCity === city
+                            ? 'bg-[#4F46E5] text-white rounded-xl border-slate-200'
                             : 'text-slate-600 hover:text-slate-900 hover:bg-white'
-                        }`}
+                          }`}
                       >
                         {city}
                       </button>
@@ -860,7 +861,7 @@ const MapPage = () => {
                 <div style={{ display: activeView === 'search' ? 'block' : 'none' }}>
                   <div className="p-4 bg-white border-b border-slate-200 sticky top-0 z-10">
                     <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                      <IconSearch size={18} className="text-blue-600" />
+                      <IconSearch size={18} className="text-primary" />
                       <TranslatableText textKey="temples_near">Temples near</TranslatableText> {searchCity}
                     </p>
                     <TranslatableText textKey="tap_place_list" tag="p" className="mt-1 text-xs text-slate-500">
@@ -872,7 +873,7 @@ const MapPage = () => {
                     <div className="flex flex-col items-center justify-center py-20">
                       <div className="relative w-16 h-16">
                         <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
-                        <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                        <div className="absolute inset-0 rounded-full border-4 border-primary-500 border-t-transparent animate-spin"></div>
                       </div>
                       <TranslatableText textKey="preparing_map" tag="p" className="mt-6 text-slate-600 font-medium">
                         Preparing map…
@@ -899,8 +900,8 @@ const MapPage = () => {
         {/* Map Container */}
         <div className="flex-1 relative lg:mr-16">
           <div className="absolute inset-0 lg:inset-4 overflow-hidden border border-slate-200 bg-white shadow-sm">
-            <div 
-              ref={mapContainerRef} 
+            <div
+              ref={mapContainerRef}
               className="w-full h-full absolute inset-0 bg-white"
             />
             <div className="pointer-events-none absolute inset-0 ring-1 ring-black/5" />
@@ -939,7 +940,7 @@ const MapPage = () => {
                 <button
                   onClick={getCurrentLocation}
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#1d4ed8] text-white font-semibold shadow-sm active:bg-[#1e40af] transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#4F46E5] text-white font-semibold shadow-sm active:bg-[#6366F1] transition-colors disabled:opacity-50"
                 >
                   <IconCurrentLocation size={20} className={isLoading ? 'animate-spin' : ''} />
                   <TranslatableText textKey={currentUserLocation ? 'location_ready' : 'use_my_location'}>
@@ -954,11 +955,10 @@ const MapPage = () => {
                       <button
                         key={city}
                         onClick={() => searchNearbyTemples(city)}
-                        className={`flex-1 px-3 py-2.5 text-sm font-semibold border border-transparent transition-colors ${
-                          searchCity === city
+                        className={`flex-1 px-3 py-2.5 text-sm font-semibold border border-transparent transition-colors ${searchCity === city
                             ? 'bg-white text-slate-900 border-slate-200'
                             : 'text-slate-600 active:bg-white'
-                        }`}
+                          }`}
                       >
                         {city}
                       </button>
@@ -972,7 +972,7 @@ const MapPage = () => {
                 <div style={{ display: activeView === 'search' ? 'block' : 'none' }}>
                   <div className="p-3 bg-white border-b border-slate-200 sticky top-0 z-10">
                     <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                      <IconSearch size={18} className="text-blue-600" />
+                      <IconSearch size={18} className="text-primary" />
                       <TranslatableText textKey="near_city">
                         Near
                       </TranslatableText> {searchCity}
@@ -981,22 +981,22 @@ const MapPage = () => {
                       Tap a result to open details
                     </TranslatableText>
                   </div>
-                  
+
                   {!isMapReady && (
                     <div className="flex flex-col items-center justify-center py-12">
                       <div className="relative w-14 h-14">
                         <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
-                        <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
+                        <div className="absolute inset-0 rounded-full border-4 border-primary-500 border-t-transparent animate-spin"></div>
                       </div>
                       <TranslatableText textKey="loading" tag="p" className="mt-4 text-slate-600 text-sm font-medium">
                         Loading…
                       </TranslatableText>
                     </div>
                   )}
-                  
+
                   {/* Mobile shows the same nearby results - Mappls injects here on mobile */}
                   <div className="p-3 lg:hidden">
-                    <div 
+                    <div
                       id="nearby_search_results"
                       suppressHydrationWarning
                     />

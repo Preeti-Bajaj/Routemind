@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useCallback } from "react";
+﻿import React, { useEffect, useRef, useState, useCallback } from "react";
 import { IconMicrophone, IconMicrophoneOff } from '@tabler/icons-react';
 
 const AGENT_BASE = import.meta.env.VITE_AGENT_URL ?? "";
@@ -1133,14 +1133,14 @@ export default function Itinerary() {
         {/* Content */}
         <section className="grid gap-6 lg:grid-cols-3">
           {/* Chat Box */}
-          <div className="lg:col-span-2 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
+          <div className="lg:col-span-2 rounded-2xl border border-primary-200 bg-sand-light shadow-sm overflow-hidden">
             {/* Chat header */}
-            <div className="flex items-center justify-between gap-3 border-b border-gray-100 bg-sand px-5 py-4 sm:px-6">
+            <div className="flex items-center justify-between gap-3 border-b border-white bg-sand px-5 py-4 sm:px-6 bg-[#4F46E5]">
               <div>
-                <p className="text-sm font-semibold text-gray-900">
+                <p className="text-sm font-semibold text-white ">
                   Itinerary Assistant
                 </p>
-                <p className="text-xs text-gray-600">
+                <p className="text-xs text-white">
                   Mode: {mode === "planner" ? "Planner" : "Chat"} · Odisha only
                 </p>
               </div>
@@ -1151,8 +1151,8 @@ export default function Itinerary() {
                   className={
                     "inline-flex items-center justify-center rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm transition disabled:opacity-60 " +
                     (mode === "planner"
-                      ? "border-primary-300 bg-primary text-white hover:bg-primary"
-                      : "border-gray-200 bg-white text-gray-800 hover:bg-sand")
+                      ? "border-primary-300 bg-white text-primary-dark hover:bg-primary"
+                      : "border-primary-200 bg-white text-primary-dark hover:bg-primary-100")
                   }
                   aria-label="Toggle planner mode"
                   title={
@@ -1166,7 +1166,7 @@ export default function Itinerary() {
                 <button
                   onClick={resetChat}
                   disabled={loading}
-                  className="inline-flex items-center justify-center rounded-lg border border-primary-200 bg-white px-3 py-2 text-xs font-semibold text-primary-dark shadow-sm transition hover:bg-sand disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-lg border border-white  px-3 py-2 text-xs font-semibold text-white shadow-sm transition hover:bg-primary-100 disabled:opacity-60"
                   aria-label="Reset chat"
                 >
                   Reset
@@ -1195,7 +1195,7 @@ export default function Itinerary() {
                     </button>
                     <button
                       onClick={() => switchToPlanner(false)}
-                      className="w-full rounded-xl border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-700 hover:bg-sand transition"
+                      className="w-full rounded-xl border border-primary-200 bg-primary-50 px-4 py-2.5 text-sm font-semibold text-primary-dark hover:bg-primary-100 transition"
                     >
                       No, start fresh
                     </button>
@@ -1211,7 +1211,7 @@ export default function Itinerary() {
             )}
 
             {/* Messages */}
-            <div className="h-[52vh] sm:h-[56vh] overflow-y-auto px-4 py-5 sm:px-6 bg-white">
+            <div className="h-[52vh] sm:h-[56vh] overflow-y-auto px-4 py-5 sm:px-6 bg-sand-light">
               {messages.length === 0 ? (
                 <div className="mx-auto max-w-xl">
                   <div className="rounded-2xl border border-primary-100 bg-sand/60 p-4">
@@ -1297,7 +1297,7 @@ export default function Itinerary() {
             </div>
 
             {/* Composer */}
-            <div className="border-t border-gray-100 bg-white px-4 py-4 sm:px-6">
+            <div className="border-t border-primary-100 bg-sand-light px-4 py-4 sm:px-6">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
@@ -1381,7 +1381,7 @@ export default function Itinerary() {
                   <button
                     type="submit"
                     disabled={loading || !prompt.trim()}
-                    className="inline-flex items-center justify-center rounded-xl bg-primary px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-primary disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center rounded-xl bg-[#4F46E5] px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-primary disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {loading ? "Sending…" : "Send"}
                   </button>
@@ -1396,8 +1396,8 @@ export default function Itinerary() {
           </div>
 
           {/* History Sidebar */}
-          <aside className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm flex flex-col h-full max-h-[85vh]">
-            <div className="flex border-b border-gray-200 mb-4">
+          <aside className="rounded-2xl border border-primary-200 bg-sand-light p-5 sm:p-6 shadow-sm flex flex-col h-full max-h-[85vh]">
+            <div className="flex border-b border-primary-100 mb-4">
               <button 
                 className={`flex-1 pb-3 px-2 text-sm font-semibold transition-colors ${historyTab === 'chat' ? 'border-b-2 border-primary text-primary' : 'text-gray-500 hover:text-gray-700'}`}
                 onClick={() => setHistoryTab('chat')}
@@ -1421,7 +1421,7 @@ export default function Itinerary() {
                       onClick={() => loadChatSession(session.id)}
                       className={`w-full text-left p-4 rounded-xl transition-all border ${
                         chatId === session.id
-                          ? "bg-sand border-primary-200 shadow-sm"
+                          ? "bg-sand border-[#4F46E5] border-2 shadow-sm"
                           : "bg-white border-gray-100 hover:bg-sand hover:border-gray-300"
                       }`}
                     >

@@ -457,7 +457,7 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-gray-100 flex flex-col">
+    <div className="fixed inset-0 z-50 bg-sand-light flex flex-col">
       {/* Top bar */}
       <div className="absolute top-0 left-0 right-0 z-20 bg-white shadow-sm border-b border-primary-100">
         <div className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 max-w-7xl mx-auto w-full">

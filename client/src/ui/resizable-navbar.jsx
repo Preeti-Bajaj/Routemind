@@ -122,7 +122,7 @@ export const NavItems = ({
               }
             >
               {hoveredBg}
-              <span className={cn("relative z-10", hovered === idx && "text-[#1d4ed8]")}>{item.name}</span>
+              <span className={cn("relative z-10", hovered === idx && "text-[#4F46E5]")}>{item.name}</span>
             </NavLink>
           );
         }
@@ -136,7 +136,7 @@ export const NavItems = ({
             className={cn(commonClassName, "cursor-pointer")}
           >
             {hoveredBg}
-            <span className={cn("relative z-10", hovered === idx && "text-[#1d4ed8]")}>{item.name}</span>
+            <span className={cn("relative z-10", hovered === idx && "text-[#4F46E5]")}>{item.name}</span>
           </button>
         );
       })}
@@ -249,7 +249,7 @@ export const NavbarButton = ({
   ...props
 }) => {
   const baseStyles =
-    "px-4 py-2 rounded-md bg-white button bg-[#670E10] text-white text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-100 inline-block text-center";
+    "px-4 py-2 rounded-md bg-white button bg-[#4F46E5] text-white text-sm font-bold relative cursor-pointer hover:-translate-y-0.5 transition duration-100 inline-block text-center";
 
   const variantStyles = {
     primary:

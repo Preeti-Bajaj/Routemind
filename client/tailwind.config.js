@@ -39,6 +39,7 @@ export default {
           light: '#F0D4A8',
           dark: '#C9953E',
         },
+        textDark: '#1F2937',
       },
     },
   },

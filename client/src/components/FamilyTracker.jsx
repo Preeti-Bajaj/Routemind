@@ -701,7 +701,7 @@ const FamilyTracker = () => {
               <div className="flex gap-2">
                 <button
                   onClick={() => fetchLatestFamilyLocations()}
-                  className="px-4 py-2 bg-sand text-primary-dark font-medium rounded-xl hover:bg-primary-200 transition-colors"
+                  className="px-4 py-2 bg-primary-50 text-primary border-2 border-primary-200 font-medium rounded-xl hover:bg-primary-100 transition-colors"
                 >
                   {polling ? "Refreshing..." : "Refresh Data"}
                 </button>
@@ -803,7 +803,7 @@ const FamilyTracker = () => {
                     }`}
                   >
                     <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 rounded-full bg-primary-light text-white font-bold flex items-center justify-center text-lg shadow-sm">
+                      <div className="w-12 h-12 rounded-full bg-[#4F46E5] text-white font-bold flex items-center justify-center text-lg shadow-md">
                         {member?.userId?.name?.charAt(0)?.toUpperCase() || "?"}
                       </div>
                       <div>
@@ -846,7 +846,7 @@ const FamilyTracker = () => {
                       {!isCurrentUser && (
                         <button
                           onClick={() => openMemberMap(member)}
-                          className="px-4 py-2 bg-sand text-primary-dark font-medium rounded-xl hover:bg-primary-200 transition-colors"
+                          className="px-4 py-2 bg-primary text-white font-medium rounded-xl hover:bg-primary-light shadow-sm transition-all"
                         >
                           View Map
                         </button>

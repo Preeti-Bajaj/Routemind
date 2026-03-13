@@ -135,7 +135,7 @@ const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start pt-2">
             <button
               onClick={() => navigate("/map")}
-              className="group relative px-8 py-3.5 bg-primary text-white rounded-2xl font-semibold shadow-lg shadow-primary-300/40 hover:shadow-xl hover:shadow-primary-400/40 hover:bg-primary-light hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
+              className="group relative px-8 py-3.5 bg-[#4F46E5] text-white rounded-2xl font-semibold shadow-lg shadow-primary-300/40 hover:shadow-xl hover:shadow-primary-400/40 hover:bg-primary-light hover:-translate-y-0.5 transition-all duration-300 overflow-hidden"
             >
               <span className="absolute inset-0 bg-primary-dark opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
               <span className="relative">
@@ -144,7 +144,7 @@ const Home = () => {
             </button>
             <button
               onClick={() => navigate("/itineraryai")}
-              className="px-8 py-3.5 border-2 border-primary-300 text-primary-dark rounded-2xl font-semibold hover:bg-sand hover:border-primary-400 hover:-translate-y-0.5 transition-all duration-300"
+              className="px-8 py-3.5 bg-primary-50 border-2 border-primary-300 text-primary-dark rounded-2xl font-semibold hover:bg-primary-100 hover:border-primary-400 hover:-translate-y-0.5 transition-all duration-300"
             >
               <TranslatableText textKey="btn_plan_yatra">Plan Your Yatra</TranslatableText>
             </button>
@@ -397,7 +397,7 @@ const Home = () => {
       <RevealSection>
         <section className="relative mx-4 md:mx-16 mb-20 rounded-[2rem] overflow-hidden">
           {/* gradient background */}
-          <div className="absolute inset-0 bg-primary " />
+          <div className="absolute inset-0" style={{ background: 'linear-gradient(135deg, #4F46E5, #6366F1)' }} />
           {/* subtle pattern */}
           <div className="absolute inset-0 opacity-[0.04]" style={{
             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
@@ -414,7 +414,7 @@ const Home = () => {
             <TranslatableText
               textKey="cta_desc"
               tag="p"
-              className="mt-4 text-primary-100/90 max-w-xl mx-auto text-base sm:text-lg leading-relaxed"
+              className="mt-4 text-gray-300 max-w-xl mx-auto text-base sm:text-lg leading-relaxed"
             >
               Plan your Odisha pilgrimage and explore temples, beaches, and
               culture in one divine journey.
@@ -440,7 +440,7 @@ const Home = () => {
       </RevealSection>
 
       {/* ════════════════════ FOOTER ════════════════════ */}
-      <footer className="border-t border-gray-100 bg-white px-6 md:px-16 py-12">
+      <footer className="border-t border-primary-100/40 bg-sand-light px-6 md:px-16 py-12">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
           <div className="text-center md:text-left">
             <p className="font-bold text-lg text-gray-900 flex items-center gap-2 justify-center md:justify-start">

@@ -195,10 +195,7 @@ const FamilyTrackerPage = () => {
               key={alert.id}
               className="bg-primary text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-4 animate-pulse"
             >
-              <div className="flex-1">
-                <p className="font-bold">⚠️ Distance Alert</p>
-                <p className="text-sm">{alert.message}</p>
-              </div>
+              
               <button
                 onClick={() => dismissDistanceAlert(alert.id)}
                 className="text-white hover:text-gray-200"

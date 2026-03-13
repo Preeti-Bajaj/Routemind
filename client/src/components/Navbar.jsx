@@ -84,7 +84,6 @@ export function NavbarDemo() {
   const navItems = [
     { name: "Home", link: "/", isRoute: true },
     { name: "Map", link: "/map", isRoute: true },
-    { name: "About", link: "#about", isRoute: false },
     { name: "Family Tracker", link: "/family-tracker", isRoute: true },
     { name: "Itinerary AI", link: "/itineraryai", isRoute: true },
   ];
@@ -92,7 +91,6 @@ export function NavbarDemo() {
   const baseActions = [
     { icon: <HomeIcon />, name: "Home", link: "/", isRoute: true },
     { icon: <MapIcon />, name: "Map", link: "/map", isRoute: true },
-    { icon: <InfoIcon />, name: "About", link: "#about", isRoute: false },
     { icon: <GroupIcon />, name: "Family Tracker", link: "/family-tracker", isRoute: true },
     { icon: <AutoAwesomeIcon />, name: "Itinerary AI", link: "/itineraryai", isRoute: true },
   ];
@@ -111,7 +109,7 @@ export function NavbarDemo() {
     <>
       {/* ================= Desktop Navbar ================= */}
       <Navbar className="hidden lg:flex">
-        <NavBody className="bg-[#1d4ed8] px-6 py-0.5 shadow-md">
+        <NavBody className="bg-[#4F46E5] px-6 py-0.5 shadow-md">
           <NavbarLogo />
 
           <NavItems
@@ -172,9 +170,9 @@ export function NavbarDemo() {
           icon={<SpeedDialIcon />}
           FabProps={{
             sx: {
-              bgcolor: "#1d4ed8",
+              bgcolor: "#4F46E5",
               color: "white",
-              "&:hover": { bgcolor: "#1e40af" },
+              "&:hover": { bgcolor: "#6366F1" },
             },
           }}
         >
