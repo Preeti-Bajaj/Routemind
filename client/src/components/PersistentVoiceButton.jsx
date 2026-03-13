@@ -28,9 +28,9 @@ const PersistentVoiceButton = () => {
         onClick={toggleVoiceNavigation}
         className={`fixed bottom-4 left-4 lg:bottom-6 lg:left-auto lg:right-6 z-50 w-11 h-11 lg:w-14 lg:h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 ${
           buttonState === 'off'
-            ? 'bg-sand0 hover:bg-slate-600'
+            ? 'bg-[#4F46E5] hover:bg-slate-600'
             : buttonState === 'listening'
-            ? 'bg-primary animate-pulse shadow-primary-600/50'
+            ? 'bg-gray-400 animate-pulse shadow-primary-600/50'
             : buttonState === 'processing'
             ? 'bg-primary-light animate-spin-slow'
             : 'bg-primary hover:bg-primary-light animate-breathing'

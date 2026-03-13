@@ -146,7 +146,7 @@ export function NavbarDemo() {
               <>
                 <button
                   onClick={() => navigate("/signin")}
-                  className="px-6 py-2 border-2 border-primary text-primary font-bold rounded-xl"
+                  className="px-6 py-2 border-2 border-primary bg-white text-primary font-bold rounded-xl"
                 >
                   Sign In
                 </button>

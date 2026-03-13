@@ -294,10 +294,10 @@ const Profile = () => {
 
             <div className="mt-6 flex gap-3">
               <button
-                onClick={() => navigate("/map")}
-                className="flex-1 py-2 bg-primary text-white rounded-xl font-bold"
+                onClick={() => navigate("/")}
+                className="flex-1 py-2 bg-[#4F46E5] text-white rounded-xl font-bold"
               >
-                Back to Map
+                Back to Home
               </button>
 
               <button

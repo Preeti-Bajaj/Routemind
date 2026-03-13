@@ -472,7 +472,7 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
           </h1>
           <button
             onClick={fetchMemberLatestLocation}
-            className="px-4 py-2 font-medium text-sm md:text-base rounded-xl bg-primary text-white shadow hover:shadow-md hover:-translate-y-0.5 transition-all"
+            className="px-4 py-2 font-medium text-sm md:text-base rounded-xl bg-[#4F46E5] text-white shadow hover:shadow-md hover:-translate-y-0.5 transition-all"
           >
             Refresh
           </button>
@@ -544,18 +544,18 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
                 }
               }}
               disabled={routeStatus === "loading" || tracking.latitude == null}
-              className="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold bg-primary text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-all"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold bg-[#4F46E5] text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-all"
             >
               {routeStatus === "loading" ? (
                 <>
-                  <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                  <span className="animate-spin inline-block w-4 h-4 bg-[#4F46E5] border-2 border-white border-t-transparent rounded-full" />
                   Routing...
                 </>
               ) : (
                 <>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-4 h-4"
+                    className="w-4 h-4 text-white bg-[#4F46E5]"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"

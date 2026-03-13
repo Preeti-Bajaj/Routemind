@@ -574,7 +574,7 @@ const FamilyTracker = () => {
             {!isCreatingFamily ? (
               <button
                 onClick={() => setIsCreatingFamily(true)}
-                className="w-full bg-primary text-white px-4 py-3 rounded-2xl font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all"
+                className="w-full bg-[#4F46E5] text-white px-4 py-3 rounded-2xl font-semibold hover:shadow-lg hover:-translate-y-0.5 transition-all"
               >
                 Create New Family
               </button>
@@ -634,7 +634,7 @@ const FamilyTracker = () => {
                 <div className="flex gap-3">
                   <button
                     type="submit"
-                    className="flex-1 bg-primary text-white px-4 py-3 rounded-2xl hover:shadow-md transition-all font-medium"
+                    className="flex-1 bg-[#4F46E5] text-white px-4 py-3 rounded-2xl hover:shadow-md transition-all font-medium"
                   >
                     Join
                   </button>
@@ -846,7 +846,7 @@ const FamilyTracker = () => {
                       {!isCurrentUser && (
                         <button
                           onClick={() => openMemberMap(member)}
-                          className="px-4 py-2 bg-primary text-white font-medium rounded-xl hover:bg-primary-light shadow-sm transition-all"
+                          className="px-4 py-2 bg-primary text-[#4F46E5] border-[#4F46E5] font-medium rounded-xl hover:bg-primary-light shadow-sm transition-all"
                         >
                           View Map
                         </button>

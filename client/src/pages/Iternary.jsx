@@ -1189,7 +1189,7 @@ export default function Itinerary() {
                   <div className="mt-5 flex flex-col gap-2">
                     <button
                       onClick={() => switchToPlanner(true)}
-                      className="w-full rounded-xl bg-primary px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary transition"
+                      className="w-full rounded-xl bg-[#4F46E5] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-primary transition"
                     >
                       Yes, use my chat context
                     </button>
@@ -1243,7 +1243,7 @@ export default function Itinerary() {
                           className={
                             "max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 shadow-sm border " +
                             (isUser
-                              ? "bg-primary text-white border-primary"
+                              ? "bg-primary text-[#4F46E5] border-[#4F46E5]"
                               : "bg-white text-gray-900 border-gray-200")
                           }
                         >
@@ -1261,7 +1261,7 @@ export default function Itinerary() {
                               translatingMessageId={translatingMessageId}
                             />
                           ) : (
-                            <p className="text-sm whitespace-pre-wrap text-white leading-relaxed" style={{ lineHeight: '1.8' }}>
+                            <p className="text-sm whitespace-pre-wrap text-[#4F46E5] font-semibold leading-relaxed" style={{ lineHeight: '1.8' }}>
                               {renderWithLinks(m.content, isUser)}
                             </p>
                           )}
@@ -1449,7 +1449,7 @@ export default function Itinerary() {
                       onClick={() => loadPlannerSession(session.chat_id)}
                       className={`w-full text-left p-4 rounded-xl transition-all border ${
                         chatId === session.chat_id && mode === "planner"
-                          ? "bg-sand border-primary-200 shadow-sm"
+                          ? "bg-sand border-[#4F46E5] border-2 shadow-sm"
                           : "bg-white border-gray-100 hover:bg-sand hover:border-gray-300"
                       }`}
                     >
@@ -1464,7 +1464,7 @@ export default function Itinerary() {
                     </button>
                   ))
                 ) : (
-                  <div className="text-center py-8 text-sm text-gray-500 bg-sand rounded-xl border border-dashed border-gray-200">
+                  <div className="text-center py-8 text-sm text-gray-500 bg-sand rounded-xl border border-dashed border-[#4F46E5]">
                     {userId === "guest" ? "Login to view planner history." : "No planner history found."}
                   </div>
                 )
