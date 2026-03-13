@@ -111,7 +111,7 @@ export function NavbarDemo() {
     <>
       {/* ================= Desktop Navbar ================= */}
       <Navbar className="hidden lg:flex">
-        <NavBody className="bg-[#f4622d] px-6 py-0.5 shadow-md">
+        <NavBody className="bg-[#1d4ed8] px-6 py-0.5 shadow-md">
           <NavbarLogo />
 
           <NavItems
@@ -139,23 +139,23 @@ export function NavbarDemo() {
 
                 <button
                   onClick={handleLogout}
-                  className="px-6 py-2 bg-red-600 text-white font-bold rounded-xl"
+                  className="p-2 bg-white text-red-600 font-bold rounded-xl"
                 >
-                  Logout
+                  <LogoutIcon />
                 </button>
               </>
             ) : (
               <>
                 <button
                   onClick={() => navigate("/signin")}
-                  className="px-6 py-2 border-2 border-orange-600 text-orange-600 font-bold rounded-xl"
+                  className="px-6 py-2 border-2 border-blue-600 text-blue-600 font-bold rounded-xl"
                 >
                   Sign In
                 </button>
 
                 <button
                   onClick={() => navigate("/signup")}
-                  className="px-6 py-2 bg-orange-600 text-white font-bold rounded-xl"
+                  className="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl"
                 >
                   Sign Up
                 </button>
@@ -172,9 +172,9 @@ export function NavbarDemo() {
           icon={<SpeedDialIcon />}
           FabProps={{
             sx: {
-              bgcolor: "#f4622d",
+              bgcolor: "#1d4ed8",
               color: "white",
-              "&:hover": { bgcolor: "#fa4909ff" },
+              "&:hover": { bgcolor: "#1e40af" },
             },
           }}
         >

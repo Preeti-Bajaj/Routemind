@@ -52,7 +52,7 @@ const SignIn = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-orange-50 to-amber-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-blue-50 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl w-full max-w-md p-8">
         {/* Header */}
         <div className="text-center mb-8">
@@ -80,7 +80,7 @@ const SignIn = () => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
                 placeholder="your.email@example.com"
               />
             </div>
@@ -97,7 +97,7 @@ const SignIn = () => {
                 value={formData.password}
                 onChange={handleChange}
                 required
-                className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-orange-500 focus:outline-none"
+                className="w-full pl-10 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:border-blue-600 focus:outline-none"
                 placeholder="Enter your password"
               />
             </div>
@@ -105,7 +105,7 @@ const SignIn = () => {
 
           {/* Forgot Password Link */}
           <div className="text-right">
-            <Link to="/forgot-password" className="text-sm text-orange-600 hover:underline">
+            <Link to="/forgot-password" className="text-sm text-blue-600 hover:underline">
               Forgot Password?
             </Link>
           </div>
@@ -114,7 +114,7 @@ const SignIn = () => {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-gradient-to-r from-orange-600 to-amber-500 text-white font-bold py-3 rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
+            className="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all disabled:opacity-50"
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
@@ -140,7 +140,7 @@ const SignIn = () => {
         {/* Sign Up Link */}
         <p className="text-center mt-6 text-slate-600">
           Don't have an account?{' '}
-          <Link to="/signup" className="text-orange-600 font-bold hover:underline">
+          <Link to="/signup" className="text-blue-600 font-bold hover:underline">
             Sign Up
           </Link>
         </p>

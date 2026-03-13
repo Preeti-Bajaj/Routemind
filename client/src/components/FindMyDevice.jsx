@@ -246,6 +246,14 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
           err?.code === 1
             ? "Location permission denied — cannot draw route."
             : err?.message || "Could not calculate route.";
+            
+        // Suppress Mappls SDK internal 'style' error from showing in the UI
+        if (msg.includes("reading 'style'")) {
+          setRouteStatus("idle");
+          setRouteError("");
+          return;
+        }
+
         setRouteStatus("error");
         setRouteError(msg);
       }
@@ -451,20 +459,20 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
   return (
     <div className="fixed inset-0 z-50 bg-gray-100 flex flex-col">
       {/* Top bar */}
-      <div className="absolute top-0 left-0 right-0 z-20 bg-white border-b border-gray-200">
-        <div className="flex items-center justify-between px-4 py-3">
+      <div className="absolute top-0 left-0 right-0 z-20 bg-white shadow-sm border-b border-blue-100">
+        <div className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 max-w-7xl mx-auto w-full">
           <button
             onClick={onClose}
-            className="px-3 py-2 text-sm font-medium rounded-lg border border-gray-300 hover:bg-gray-50"
+            className="px-4 py-2 font-medium text-sm md:text-base rounded-xl border-2 border-blue-100 text-blue-700 hover:bg-blue-50 hover:border-blue-200 transition-colors"
           >
-            Back
+            ← Back
           </button>
-          <h1 className="text-base sm:text-lg font-semibold">
-            Member Location
+          <h1 className="text-lg md:text-xl font-bold bg-blue-600 bg-clip-text text-transparent">
+            Live Tracker
           </h1>
           <button
             onClick={fetchMemberLatestLocation}
-            className="px-3 py-2 text-sm font-medium rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+            className="px-4 py-2 font-medium text-sm md:text-base rounded-xl bg-blue-600 text-white shadow hover:shadow-md hover:-translate-y-0.5 transition-all"
           >
             Refresh
           </button>
@@ -474,8 +482,8 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
       {/* Stale location warning banner — shown over the map */}
       {tracking.isStale && tracking.isSharingLocation && (
         <div
-          className="absolute left-0 right-0 z-20 bg-amber-400 text-amber-900 text-xs font-semibold text-center py-1.5 px-4"
-          style={{ top: "64px" }}
+          className="absolute left-0 right-0 z-20 bg-blue-100 border-b border-blue-200 text-blue-800 text-sm font-medium text-center py-2 px-4 shadow-sm"
+          style={{ top: "72px" }}
         >
           ⚠️ Location is stale — last update: {formatLastSeen()}
         </div>
@@ -495,12 +503,38 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
       />
 
       {/* Bottom info panel */}
-      <div className="absolute left-0 right-0 bottom-0 z-20 bg-white border-t border-gray-200">
-        <div className="p-4 space-y-2">
-          <div className="flex items-center justify-between gap-2">
-            <p className="text-sm font-semibold text-gray-900">
-              {tracking.name}
-            </p>
+      <div className="absolute left-0 right-0 bottom-0 z-20 bg-white/95 backdrop-blur-md border-t-2 border-blue-100 shadow-[0_-10px_30px_-15px_rgba(249,115,22,0.2)] rounded-t-3xl pt-2">
+        <div className="w-12 h-1.5 bg-gray-200 rounded-full mx-auto my-2"></div>
+        <div className="p-5 md:p-6 max-w-5xl mx-auto space-y-5">
+          <div className="flex items-center justify-between gap-4">
+            <div>
+              <p className="text-xl md:text-2xl font-bold tracking-tight text-gray-900 mb-2">
+                {tracking.name}
+              </p>
+              <div className="flex flex-wrap gap-2 text-xs font-medium">
+                <span
+                  className={`px-3 py-1.5 rounded-full ${
+                    tracking.isSharingLocation
+                      ? "bg-green-100 text-green-700"
+                      : "bg-gray-100 text-gray-600"
+                  }`}
+                >
+                  {tracking.isSharingLocation ? "Sharing enabled" : "Sharing disabled"}
+                </span>
+                <span
+                  className={`px-3 py-1.5 rounded-full shadow-sm font-semibold ${
+                    tracking.isStale
+                      ? "bg-blue-100 text-blue-800"
+                      : "bg-blue-100 text-blue-700"
+                  }`}
+                >
+                  {tracking.isStale ? "⚠️ Stale" : "✓ Fresh"}
+                </span>
+                <span className="px-3 py-1.5 rounded-full bg-blue-50 text-blue-700">
+                  Auto-refresh active
+                </span>
+              </div>
+            </div>
 
             {/* Route action button */}
             <button
@@ -510,18 +544,18 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
                 }
               }}
               disabled={routeStatus === "loading" || tracking.latitude == null}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold bg-orange-500 text-white hover:bg-orange-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
+              className="flex items-center gap-2 px-5 py-3 rounded-2xl text-sm font-bold bg-blue-600 text-white hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed hover:-translate-y-0.5 transition-all"
             >
               {routeStatus === "loading" ? (
                 <>
-                  <span className="animate-spin inline-block w-3 h-3 border-2 border-white border-t-transparent rounded-full" />
-                  Routing…
+                  <span className="animate-spin inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full" />
+                  Routing...
                 </>
               ) : (
                 <>
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="w-3.5 h-3.5"
+                    className="w-4 h-4"
                     viewBox="0 0 24 24"
                     fill="none"
                     stroke="currentColor"
@@ -539,80 +573,70 @@ const FindMyDevice = ({ member, currentUser, onClose }) => {
 
           {/* Route info strip */}
           {routeStatus === "success" && routeInfo && (
-            <div className="space-y-1.5">
-              <div className="flex items-center gap-3 rounded-lg bg-orange-50 border border-orange-100 px-3 py-2 text-xs">
-                <span className="font-semibold text-orange-700">
-                  🚗 {routeInfo.distance} km
-                </span>
-                <span className="text-gray-400">·</span>
-                <span className="font-semibold text-orange-700">
-                  ~{routeInfo.duration} min
-                </span>
-                <span className="text-gray-400">·</span>
-                <span className="text-gray-500">
-                  your GPS ±{routeInfo.accuracy} m
-                </span>
+            <div className="space-y-2">
+              <div className="flex flex-wrap items-center justify-between lg:justify-start gap-4 rounded-2xl bg-blue-50 border border-blue-100 px-4 py-3 text-sm shadow-sm">
+                <div className="flex items-center gap-4">
+                  <span className="font-bold text-blue-700 flex items-center gap-1.5">
+                    <span className="text-xl">🚗</span> {routeInfo.distance} km
+                  </span>
+                  <span className="w-1.5 h-1.5 bg-blue-300 rounded-full"></span>
+                  <span className="font-bold text-blue-700">
+                    ~{routeInfo.duration} min
+                  </span>
+                </div>
+                <div className="flex items-center gap-4">
+                  <span className="w-1.5 h-1.5 bg-blue-300 rounded-full hidden sm:block"></span>
+                  <span className="text-blue-600 font-medium tracking-tight">
+                    your GPS ±{routeInfo.accuracy} m
+                  </span>
+                </div>
               </div>
               {routeInfo.accuracyWeak && (
-                <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-1.5">
-                  ⚠️ Low GPS accuracy ({routeInfo.accuracy} m) — route start
-                  point may be approximate. Move outdoors for a better fix.
-                </p>
+                <div className="flex items-start gap-2 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl px-4 py-3 text-sm shadow-sm">
+                  <span className="text-lg leading-none">⚠️</span>
+                  <p className="font-medium">
+                    Low GPS accuracy ({routeInfo.accuracy} m). The starting point may be approximate. Consider moving outdoors.
+                  </p>
+                </div>
               )}
             </div>
           )}
 
           {routeStatus === "error" && routeError && (
-            <p className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-3 py-1.5">
-              ⚠️ {routeError}
-            </p>
+             <div className="flex items-start gap-2 bg-red-50 border border-red-200 text-red-700 rounded-xl px-4 py-3 text-sm shadow-sm">
+               <span className="text-lg leading-none">⚠️</span>
+               <p className="font-medium">{routeError}</p>
+             </div>
           )}
 
-          <div className="flex flex-wrap gap-2 text-xs">
-            <span
-              className={`px-2 py-1 rounded-full ${
-                tracking.isSharingLocation
-                  ? "bg-green-100 text-green-700"
-                  : "bg-gray-100 text-gray-700"
-              }`}
-            >
-              {tracking.isSharingLocation
-                ? "Sharing enabled"
-                : "Sharing disabled"}
-            </span>
-            <span
-              className={`px-2 py-1 rounded-full font-semibold ${
-                tracking.isStale
-                  ? "bg-amber-400 text-amber-900"
-                  : "bg-blue-100 text-blue-700"
-              }`}
-            >
-              {tracking.isStale ? "⚠️ Stale" : "✓ Fresh"}
-            </span>
-            <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-700">
-              Auto-refresh: 5s
-            </span>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 px-1 pb-2">
+            <div>
+              <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Status</p>
+              <p className="text-sm font-medium text-gray-800 truncate">{status}</p>
+            </div>
+            <div>
+              <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Last Update</p>
+              <p className="text-sm font-medium text-gray-800">{formatLastSeen()}</p>
+            </div>
+            {tracking.accuracy != null && (
+              <div>
+                <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">GPS Accuracy</p>
+                <p className="text-sm font-medium text-gray-800">±{Math.round(tracking.accuracy)}m</p>
+              </div>
+            )}
+            {autoRefreshAt && (
+              <div>
+                 <p className="text-[10px] sm:text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Last Sync</p>
+                 <p className="text-sm font-medium text-gray-800">{new Date(autoRefreshAt).toLocaleTimeString()}</p>
+              </div>
+            )}
           </div>
 
-          <p className="text-xs text-gray-600">Status: {status}</p>
-          <p className="text-xs text-gray-600">
-            Last location update: {formatLastSeen()}
-          </p>
-          {tracking.accuracy != null && (
-            <p className="text-xs text-gray-600">
-              Accuracy: {Math.round(tracking.accuracy)}m
-            </p>
-          )}
-          {autoRefreshAt && (
-            <p className="text-xs text-gray-500">
-              Last sync: {new Date(autoRefreshAt).toLocaleTimeString()}
-            </p>
-          )}
-
           {error && (
-            <p className="text-xs text-red-600 bg-red-50 border border-red-200 rounded p-2">
-              {error}
-            </p>
+            <div className="bg-red-50 border border-red-200 text-red-600 rounded-xl p-3 text-sm font-medium shadow-sm flex items-center gap-2">
+               <span className="text-lg leading-none">⚠️</span>
+               <p>{error}</p>
+            </div>
           )}
         </div>
       </div>

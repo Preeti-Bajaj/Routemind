@@ -568,7 +568,7 @@ const MapPage = () => {
               {/* Header */}
               <div className="p-6 border-b border-slate-200 bg-white">
                 <div className="flex items-center gap-4">
-                  <div className="h-12 w-12 bg-amber-100 text-amber-900 flex items-center justify-center border border-amber-200">
+                  <div className="h-12 w-12 bg-blue-100 text-blue-900 flex items-center justify-center border border-blue-200">
                     <IconMapPin size={26} />
                   </div>
                   <div>
@@ -587,7 +587,7 @@ const MapPage = () => {
                 <button
                   onClick={getCurrentLocation}
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#f4622d] text-white font-semibold shadow-sm hover:bg-[#fa4909ff] transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#1d4ed8] text-white font-semibold shadow-sm hover:bg-[#1e40af] transition-colors disabled:opacity-50"
                 >
                   <IconCurrentLocation size={20} className={isLoading ? 'animate-spin' : ''} />
                   <TranslatableText textKey={currentUserLocation ? 'location_ready' : 'use_my_location'}>
@@ -621,7 +621,7 @@ const MapPage = () => {
               <div className="flex-1 overflow-y-auto bg-white">
                 <div className="p-4 bg-white border-b border-slate-200 sticky top-0 z-10">
                   <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                    <IconSearch size={18} className="text-amber-600" />
+                    <IconSearch size={18} className="text-blue-600" />
                     <TranslatableText textKey="temples_near">Temples near</TranslatableText> {searchCity}
                   </p>
                   <TranslatableText textKey="tap_place_list" tag="p" className="mt-1 text-xs text-slate-500">
@@ -633,7 +633,7 @@ const MapPage = () => {
                   <div className="flex flex-col items-center justify-center py-20">
                     <div className="relative w-16 h-16">
                       <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
-                      <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
+                      <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
                     </div>
                     <TranslatableText textKey="preparing_map" tag="p" className="mt-6 text-slate-600 font-medium">
                       Preparing map…
@@ -664,7 +664,7 @@ const MapPage = () => {
             <div className="pointer-events-none absolute inset-0 ring-1 ring-black/5" />
           </div>
           {/* Subtle overlay to match warm theme */}
-          <div className="pointer-events-none absolute inset-0 lg:inset-4 bg-gradient-to-b from-transparent via-transparent to-amber-100/25" />
+          <div className="pointer-events-none absolute inset-0 lg:inset-4 bg-transparent" />
         </div>
 
         {/* Mobile Bottom Sheet */}
@@ -697,7 +697,7 @@ const MapPage = () => {
                 <button
                   onClick={getCurrentLocation}
                   disabled={isLoading}
-                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#f4622d] text-white font-semibold shadow-sm active:bg-[#fa4909ff] transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 px-5 py-4 bg-[#1d4ed8] text-white font-semibold shadow-sm active:bg-[#1e40af] transition-colors disabled:opacity-50"
                 >
                   <IconCurrentLocation size={20} className={isLoading ? 'animate-spin' : ''} />
                   <TranslatableText textKey={currentUserLocation ? 'location_ready' : 'use_my_location'}>
@@ -729,7 +729,7 @@ const MapPage = () => {
               <div className="flex-1 overflow-y-auto">
                 <div className="p-3 bg-white border-b border-slate-200 sticky top-0 z-10">
                   <p className="text-sm font-semibold text-slate-900 flex items-center gap-2">
-                    <IconSearch size={18} className="text-amber-600" />
+                    <IconSearch size={18} className="text-blue-600" />
                     <TranslatableText textKey="near_city">
                       Near
                     </TranslatableText> {searchCity}
@@ -743,7 +743,7 @@ const MapPage = () => {
                   <div className="flex flex-col items-center justify-center py-12">
                     <div className="relative w-14 h-14">
                       <div className="absolute inset-0 rounded-full border-4 border-slate-200"></div>
-                      <div className="absolute inset-0 rounded-full border-4 border-amber-500 border-t-transparent animate-spin"></div>
+                      <div className="absolute inset-0 rounded-full border-4 border-blue-500 border-t-transparent animate-spin"></div>
                     </div>
                     <TranslatableText textKey="loading" tag="p" className="mt-4 text-slate-600 text-sm font-medium">
                       Loading…
@@ -775,7 +775,7 @@ const MapPage = () => {
             <div className="p-6 bg-slate-900 text-white">
               <div className="flex justify-between items-start">
                 <div className="relative flex items-start gap-3 flex-1">
-                  <div className="h-11 w-11 bg-amber-200 text-slate-900 flex items-center justify-center border border-amber-300">
+                  <div className="h-11 w-11 bg-blue-200 text-slate-900 flex items-center justify-center border border-blue-300">
                     <span className="text-2xl">🕉️</span>
                   </div>
                   <div className="flex-1 min-w-0">
@@ -801,7 +801,7 @@ const MapPage = () => {
               {/* Address Card */}
               <div className="p-5 border border-slate-200 bg-white">
                 <div className="flex items-start gap-3">
-                  <div className="bg-amber-100 p-2.5 text-amber-800 border border-amber-200">
+                  <div className="bg-blue-100 p-2.5 text-blue-800 border border-blue-200">
                     <IconMapPin size={20} />
                   </div>
                   <div className="flex-1">
@@ -817,11 +817,11 @@ const MapPage = () => {
 
               {/* eLoc Card */}
               {locationDetails.eLoc && (
-                <div className="p-5 border border-amber-200 bg-amber-50">
-                  <TranslatableText textKey="digital_address" tag="p" className="text-xs font-semibold text-amber-700 uppercase tracking-[0.18em] mb-2">
+                <div className="p-5 border border-blue-200 bg-blue-50">
+                  <TranslatableText textKey="digital_address" tag="p" className="text-xs font-semibold text-blue-700 uppercase tracking-[0.18em] mb-2">
                     Digital Address (eLoc)
                   </TranslatableText>
-                  <div className="bg-white p-4 border border-amber-200">
+                  <div className="bg-white p-4 border border-blue-200">
                     <code className="font-mono text-xl font-semibold text-slate-900 tracking-widest">
                       {locationDetails.eLoc}
                     </code>
@@ -837,7 +837,7 @@ const MapPage = () => {
                     showRoute(locationDetails);
                   }}
                   disabled={isLoading || !currentUserLocation}
-                  className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-[#f4622d] text-white font-semibold text-base shadow-sm hover:bg-[#fa4909ff] transition-colors disabled:opacity-50"
+                  className="w-full flex items-center justify-center gap-3 px-6 py-4 bg-[#1d4ed8] text-white font-semibold text-base shadow-sm hover:bg-[#1e40af] transition-colors disabled:opacity-50"
                 >
                   <IconRoute size={22} />
                   <TranslatableText textKey={currentUserLocation ? 'get_directions' : 'set_location_first'}>

@@ -322,7 +322,7 @@ const FamilyMap = ({ member, onClose }) => {
     <div className="fixed inset-0 bg-white z-50 flex flex-col">
       {/* Stale location warning banner */}
       {isStale && (
-        <div className="absolute top-0 left-0 right-0 z-20 bg-amber-400 text-amber-900 text-xs font-semibold text-center py-1.5 px-4">
+        <div className="absolute top-0 left-0 right-0 z-20 bg-blue-100 border-b border-blue-200 text-blue-800 text-sm font-medium text-center py-2 px-4 shadow-sm">
           ⚠️ Location data is stale — member may have stopped sharing or lost
           signal
         </div>
@@ -330,36 +330,38 @@ const FamilyMap = ({ member, onClose }) => {
 
       {/* Header Overlay */}
       <div
-        className={`absolute left-0 right-0 z-10 p-4 ${isStale ? "top-7" : "top-0"}`}
+        className={`absolute left-0 right-0 z-10 p-4 max-w-7xl mx-auto w-full transition-all duration-300 ${isStale ? "top-8" : "top-0"}`}
       >
         <div
-          className={`bg-white/95 backdrop-blur-md shadow-lg rounded-xl p-4 flex justify-between items-center ${isStale ? "border-2 border-amber-400" : ""}`}
+          className={`bg-white/95 backdrop-blur-md shadow-lg rounded-2xl p-4 md:px-6 md:py-4 flex flex-wrap gap-4 justify-between items-center border border-white/40 ${isStale ? "border-2 border-blue-300" : ""}`}
         >
+          
           <div>
-            <h2 className="font-bold text-lg">{member.userId.name}</h2>
-            <div className="text-sm text-gray-600 flex gap-4 mt-1">
-              <span
+            <h2 className="font-bold text-xl text-gray-900">{member.userId.name}</h2>
+            <div className="text-sm border-t border-gray-100 pt-1.5 mt-1.5 flex flex-wrap gap-4">
+              {/* <span
                 className={
                   status.includes("Live")
-                    ? "text-green-600 font-semibold"
+                    ? "text-blue-600 font-semibold flex items-center gap-1.5"
                     : status.includes("⚠️")
-                      ? "text-amber-600 font-semibold"
-                      : "text-gray-500"
+                      ? "text-blue-600 font-semibold flex items-center gap-1.5"
+                      : "text-gray-500 font-medium"
                 }
               >
+                {status.includes("Live") && <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse"></span>}
                 {status}
-              </span>
+              </span> */}
               {metrics.distance && (
-                <span className="font-medium">📍 {metrics.distance}</span>
+                <span className="font-medium text-gray-700">📍 {metrics.distance}</span>
               )}
               {metrics.eta && (
-                <span className="font-medium">⏱️ {metrics.eta}</span>
+                <span className="font-medium text-gray-700">⏱️ {metrics.eta}</span>
               )}
             </div>
           </div>
           <button
             onClick={onClose}
-            className="bg-red-50 hover:bg-red-100 text-red-600 px-4 py-2 rounded-lg font-bold transition"
+            className="bg-white border-2 border-blue-100 hover:bg-blue-50 hover:border-blue-200 text-blue-700 px-5 py-2.5 rounded-xl font-bold transition-all shadow-sm hover:shadow"
           >
             ✕ Close
           </button>
@@ -373,17 +375,22 @@ const FamilyMap = ({ member, onClose }) => {
       />
 
       {/* Footer Legend */}
-      <div className="absolute bottom-0 left-0 right-0 z-10 p-4">
-        <div className="bg-white/95 backdrop-blur-md shadow-lg rounded-xl px-4 py-3 flex justify-center gap-6">
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-3 h-3 bg-red-500 rounded-full"></span>
-            <span className="text-sm font-medium">
-              {member.userId.name} (Moving)
+      <div className="absolute bottom-6 left-0 right-0 z-10 p-4 max-w-fit mx-auto w-full">
+        <div className="bg-white/95 backdrop-blur-md shadow-xl rounded-2xl border border-blue-50 px-6 py-4 flex flex-col sm:flex-row justify-center items-center gap-4 sm:gap-8 hover:shadow-2xl transition-shadow">
+          <div className="flex items-center gap-2.5">
+            <span className="flex items-center justify-center w-6 h-6 bg-red-100 rounded-full">
+              <span className="inline-block w-2.5 h-2.5 bg-red-500 rounded-full"></span>
+            </span>
+            <span className="text-sm font-semibold text-gray-700">
+              {member.userId.name} <span className="text-gray-400 font-medium text-xs">(Moving)</span>
             </span>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="inline-block w-3 h-3 bg-blue-500 rounded-full"></span>
-            <span className="text-sm font-medium">You (Destination)</span>
+          <div className="w-px h-6 bg-gray-200 hidden sm:block"></div>
+          <div className="flex items-center gap-2.5">
+            <span className="flex items-center justify-center w-6 h-6 bg-blue-100 rounded-full">
+              <span className="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full"></span>
+            </span>
+            <span className="text-sm font-semibold text-gray-700">You <span className="text-gray-400 font-medium text-xs">(Static)</span></span>
           </div>
         </div>
       </div>

@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import FamilyTracker from "../components/FamilyTracker";
+import { NavbarDemo } from "../components/Navbar";
+import LanguageSelector from "../components/LanguageSelector";
 
 const API_BASE = import.meta.env.VITE_API_URL ?? "";
 
@@ -178,14 +180,20 @@ const FamilyTrackerPage = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-blue-50/30">
+      {/* Navbar */}
+      <header className="p-4 md:px-10 flex items-center justify-between gap-4 bg-white sticky top-0 z-40 shadow-sm">
+        <NavbarDemo />
+        <LanguageSelector />
+      </header>
+
       {/* Distance Alerts */}
       {distanceAlerts.length > 0 && (
         <div className="fixed top-4 right-4 z-50 space-y-2">
           {distanceAlerts.map((alert) => (
             <div
               key={alert.id}
-              className="bg-orange-500 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-4 animate-pulse"
+              className="bg-blue-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-4 animate-pulse"
             >
               <div className="flex-1">
                 <p className="font-bold">⚠️ Distance Alert</p>
@@ -223,7 +231,9 @@ const FamilyTrackerPage = () => {
       )}
 
       {/* Main Family Tracker */}
-      <FamilyTracker />
+      <div className="py-6">
+        <FamilyTracker />
+      </div>
     </div>
   );
 };

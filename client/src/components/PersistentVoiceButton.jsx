@@ -26,29 +26,29 @@ const PersistentVoiceButton = () => {
       {/* Floating Voice Button */}
       <button
         onClick={toggleVoiceNavigation}
-        className={`fixed bottom-6 right-6 z-50 w-14 h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 ${
+        className={`fixed bottom-4 left-4 lg:bottom-6 lg:left-auto lg:right-6 z-50 w-11 h-11 lg:w-14 lg:h-14 rounded-full shadow-2xl flex items-center justify-center transition-all duration-300 ${
           buttonState === 'off'
-            ? 'bg-gray-400 hover:bg-gray-500'
+            ? 'bg-slate-500 hover:bg-slate-600'
             : buttonState === 'listening'
-            ? 'bg-red-500 animate-pulse shadow-red-500/50'
+            ? 'bg-blue-600 animate-pulse shadow-blue-600/50'
             : buttonState === 'processing'
-            ? 'bg-orange-500 animate-spin-slow'
-            : 'bg-blue-500 hover:bg-blue-600 animate-breathing'
+            ? 'bg-blue-500 animate-spin-slow'
+            : 'bg-emerald-500 hover:bg-emerald-600 animate-breathing'
         }`}
         title={isEnabled ? 'Voice navigation ON - Click to turn OFF' : 'Voice navigation OFF - Click to turn ON'}
       >
         {isEnabled ? (
-          <IconMicrophone size={28} className="text-white" />
+          <IconMicrophone size={24} className="text-white lg:w-7 lg:h-7" />
         ) : (
-          <IconMicrophoneOff size={28} className="text-white" />
+          <IconMicrophoneOff size={24} className="text-white lg:w-7 lg:h-7" />
         )}
       </button>
 
       {/* Status Indicator */}
       {isEnabled && (
-        <div className="fixed bottom-24 right-6 z-50 bg-white rounded-lg shadow-lg px-4 py-2 text-sm font-medium">
+        <div className="fixed bottom-20 left-4 lg:bottom-24 lg:left-auto lg:right-6 z-50 bg-white rounded-lg shadow-lg px-4 py-2 text-sm font-medium">
           {isProcessing ? (
-            <span className="text-orange-600">Processing...</span>
+            <span className="text-blue-600">Processing...</span>
           ) : isListening ? (
             <span className="text-red-600 flex items-center gap-2">
               <span className="inline-block w-2 h-2 bg-red-600 rounded-full animate-pulse"></span>
@@ -66,7 +66,7 @@ const PersistentVoiceButton = () => {
       {/* Feedback Toast */}
       {feedback && (
         <div
-          className={`fixed top-20 right-6 z-50 max-w-xs p-4 rounded-lg shadow-xl border-l-4 ${
+          className={`fixed top-20 right-4 lg:right-6 z-50 max-w-xs p-4 rounded-lg shadow-xl border-l-4 ${
             feedback.success
               ? 'bg-green-50 border-green-500'
               : 'bg-red-50 border-red-500'
@@ -98,7 +98,7 @@ const PersistentVoiceButton = () => {
 
       {/* Error Toast */}
       {error && (
-        <div className="fixed top-20 right-6 z-50 max-w-xs p-4 rounded-lg shadow-xl bg-red-50 border-l-4 border-red-500 animate-slide-down">
+        <div className="fixed top-20 right-4 lg:right-6 z-50 max-w-xs p-4 rounded-lg shadow-xl bg-red-50 border-l-4 border-red-500 animate-slide-down">
           <div className="text-sm font-medium text-red-800">
             {error}
           </div>

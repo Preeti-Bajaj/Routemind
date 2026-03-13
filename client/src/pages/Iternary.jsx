@@ -187,7 +187,7 @@ function PlannerBubbleWithTranslation({ messageId, payload, translatePlannerData
           </div>
           <div className="w-full bg-blue-200 rounded-full h-2 overflow-hidden">
             <div 
-              className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full transition-all duration-300 ease-out"
+              className="bg-blue-500 h-full transition-all duration-300 ease-out"
               style={{ 
                 width: `${(translationProgress.completed / translationProgress.total) * 100}%` 
               }}
@@ -205,11 +205,11 @@ function PlannerBubbleWithTranslation({ messageId, payload, translatePlannerData
 
       {Array.isArray(meta.clarifying_questions) &&
         meta.clarifying_questions.length > 0 && (
-          <div className="rounded-xl border border-orange-100 bg-orange-50/70 p-3">
-            <p className="text-xs font-semibold text-orange-800">
+          <div className="rounded-xl border border-blue-100 bg-blue-50/70 p-3">
+            <p className="text-xs font-semibold text-blue-800">
               Quick questions
             </p>
-            <ul className="mt-2 list-disc pl-5 text-xs text-orange-900/90 space-y-2">
+            <ul className="mt-2 list-disc pl-5 text-xs text-blue-900/90 space-y-2">
               {meta.clarifying_questions.map((q, idx) => (
                 <li key={idx} className="leading-relaxed" style={{ lineHeight: '1.6' }}>{q}</li>
               ))}
@@ -232,7 +232,7 @@ function PlannerBubbleWithTranslation({ messageId, payload, translatePlannerData
                 key={d.day}
                 className="rounded-lg border border-gray-200 bg-white p-3"
               >
-                <p className="text-sm font-semibold text-orange-700">
+                <p className="text-sm font-semibold text-blue-700">
                   Day {d.day}
                 </p>
                 {["morning", "afternoon", "evening"].map((slot) => (
@@ -328,7 +328,7 @@ function TranslateButton({ selectedLang, showDropdown, setShowDropdown, handleTr
       <button
         onClick={() => setShowDropdown(!showDropdown)}
         disabled={translatingMessageId === messageId}
-        className="text-xs text-gray-500 hover:text-orange-600 transition flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-orange-300 hover:bg-orange-50 shadow-sm"
+        className="text-xs text-gray-500 hover:text-blue-600 transition flex items-center gap-1 px-3 py-1.5 rounded-lg border border-gray-200 hover:border-blue-300 hover:bg-blue-50 shadow-sm"
         title="Translate this message"
       >
         🌐 {supportedLanguages.find(l => l.code === selectedLang)?.name || 'Translate'}
@@ -341,13 +341,13 @@ function TranslateButton({ selectedLang, showDropdown, setShowDropdown, handleTr
             <button
               key={lang.code}
               onClick={() => handleTranslate(lang.code)}
-              className={`w-full text-left px-3 py-2.5 text-sm hover:bg-orange-50 transition-colors flex items-center gap-2 first:rounded-t-xl last:rounded-b-xl ${
-                selectedLang === lang.code ? 'bg-orange-100 text-orange-700 font-semibold' : 'text-gray-800 hover:text-orange-600'
+              className={`w-full text-left px-3 py-2.5 text-sm hover:bg-blue-50 transition-colors flex items-center gap-2 first:rounded-t-xl last:rounded-b-xl ${
+                selectedLang === lang.code ? 'bg-blue-100 text-blue-700 font-semibold' : 'text-gray-800 hover:text-blue-600'
               }`}
             >
               <span className="text-lg">{lang.flag}</span>
               <span className="flex-1">{lang.name}</span>
-              {selectedLang === lang.code && <span className="text-orange-600 font-bold">✓</span>}
+              {selectedLang === lang.code && <span className="text-blue-600 font-bold">✓</span>}
             </button>
           ))}
         </div>
@@ -412,6 +412,101 @@ export default function Itinerary() {
   });
 
   const userId = currentUser?.uid || "guest";
+
+  const getChatSessions = () => {
+    try {
+      const cached = sessionStorage.getItem('itinerary_chat_sessions');
+      return cached ? JSON.parse(cached) : [];
+    } catch { return []; }
+  };
+  
+  const [historyTab, setHistoryTab] = useState("chat");
+  const [chatSessions, setChatSessions] = useState(getChatSessions);
+  const [plannerSessions, setPlannerSessions] = useState([]);
+
+  useEffect(() => {
+    if (messages.length === 0) return;
+    if (mode === "planner") return; // Keep chat history entirely separate from planner output!
+    
+    setChatSessions((prev) => {
+      let list = [...prev];
+      const idx = list.findIndex(s => s.id === chatId);
+      const titleMsg = messages.find(m => m.role === 'user' && m.type === 'text');
+      const title = titleMsg ? titleMsg.content.substring(0, 30) + (titleMsg.content.length > 30 ? "..." : "") : "New Trip";
+      
+      const sessionData = { id: chatId, title, mode, messages, updatedAt: Date.now() };
+      if (idx >= 0) list[idx] = sessionData;
+      else list.unshift(sessionData);
+      
+      list.sort((a, b) => b.updatedAt - a.updatedAt);
+      list = list.slice(0, 5); // Keep last 5 sessions
+      try { sessionStorage.setItem('itinerary_chat_sessions', JSON.stringify(list)); } catch (e) {}
+      return list;
+    });
+  }, [messages, chatId, mode]);
+
+  useEffect(() => {
+    if (historyTab === 'planner' && userId !== "guest") {
+      fetch(`${AGENT_BASE}/planner/history?user_id=${userId}`)
+        .then(res => res.json())
+        .then(data => {
+          if (data.ok && data.history) {
+            setPlannerSessions(data.history.slice(0, 5));
+          }
+        })
+        .catch(err => console.error("Failed to fetch planner history:", err));
+    }
+  }, [historyTab, userId]);
+
+  const loadChatSession = (id) => {
+    const s = chatSessions.find(x => x.id === id);
+    if (!s) return;
+    setChatId(s.id);
+    setMode(s.mode);
+    setMessages(s.messages);
+    setError("");
+  };
+
+  const loadPlannerSession = async (cId) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${AGENT_BASE}/planner/${cId}?user_id=${userId}`);
+      const data = await res.json();
+      if (data.ok && data.itinerary) {
+        setChatId(data.chat_id);
+        setMode("planner");
+
+        // Format historical messages properly so they don't overwrite current chat behavior
+        const loadedMessages = [];
+        
+        // Add chat history correctly if it exists to maintain continuity
+        if (data.chat_history && Array.isArray(data.chat_history)) {
+           loadedMessages.push(...data.chat_history.map((msg, i) => ({
+             id: `hist_${Date.now()}_${i}`,
+             role: msg.role || 'user',
+             type: 'text',
+             content: msg.message || msg.content || '',
+             ts: Date.now() - (data.chat_history.length - i) * 1000
+           })));
+        }
+
+        // Add the planner history item to the end
+        loadedMessages.push({
+          id: `a_${Date.now()}`,
+          role: "assistant",
+          type: "planner",
+          data: data.itinerary,
+          ts: Date.now()
+        });
+
+        setMessages(loadedMessages);
+      }
+    } catch (err) {
+      console.error("Failed to load planner session", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     listEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -653,8 +748,8 @@ export default function Itinerary() {
           className={
             "underline decoration-dotted hover:decoration-solid font-medium " +
             (isUser
-              ? "text-orange-100 hover:text-white"
-              : "text-orange-600 hover:text-orange-800")
+              ? "text-blue-100 hover:text-white"
+              : "text-blue-600 hover:text-blue-800")
           }
         >
           {label}
@@ -1016,13 +1111,13 @@ export default function Itinerary() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-orange-50/40 to-white">
+    <div className="min-h-screen bg-blue-50/40">
       <NavbarDemo />
       <Header />
       <main className="mx-auto max-w-6xl px-4 sm:px-6 pb-16 pt-8 lg:pt-12 sm:pt-8 space-y-10">
         {/* Header */}
         <header className="space-y-3">
-          <p className="text-xs sm:text-sm uppercase tracking-wide text-orange-500 font-semibold">
+          <p className="text-xs sm:text-sm uppercase tracking-wide text-blue-600 font-semibold">
             Itinerary AI
           </p>
           <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 leading-tight">
@@ -1040,7 +1135,7 @@ export default function Itinerary() {
           {/* Chat Box */}
           <div className="lg:col-span-2 rounded-2xl border border-gray-200 bg-white shadow-sm overflow-hidden">
             {/* Chat header */}
-            <div className="flex items-center justify-between gap-3 border-b border-gray-100 bg-gradient-to-r from-orange-50 to-white px-5 py-4 sm:px-6">
+            <div className="flex items-center justify-between gap-3 border-b border-gray-100 bg-blue-50 px-5 py-4 sm:px-6">
               <div>
                 <p className="text-sm font-semibold text-gray-900">
                   Itinerary Assistant
@@ -1056,7 +1151,7 @@ export default function Itinerary() {
                   className={
                     "inline-flex items-center justify-center rounded-lg border px-3 py-2 text-xs font-semibold shadow-sm transition disabled:opacity-60 " +
                     (mode === "planner"
-                      ? "border-orange-300 bg-orange-500 text-white hover:bg-orange-600"
+                      ? "border-blue-300 bg-blue-600 text-white hover:bg-blue-600"
                       : "border-gray-200 bg-white text-gray-800 hover:bg-gray-50")
                   }
                   aria-label="Toggle planner mode"
@@ -1071,7 +1166,7 @@ export default function Itinerary() {
                 <button
                   onClick={resetChat}
                   disabled={loading}
-                  className="inline-flex items-center justify-center rounded-lg border border-orange-200 bg-white px-3 py-2 text-xs font-semibold text-orange-700 shadow-sm transition hover:bg-orange-50 disabled:opacity-60"
+                  className="inline-flex items-center justify-center rounded-lg border border-blue-200 bg-white px-3 py-2 text-xs font-semibold text-blue-700 shadow-sm transition hover:bg-blue-50 disabled:opacity-60"
                   aria-label="Reset chat"
                 >
                   Reset
@@ -1094,7 +1189,7 @@ export default function Itinerary() {
                   <div className="mt-5 flex flex-col gap-2">
                     <button
                       onClick={() => switchToPlanner(true)}
-                      className="w-full rounded-xl bg-orange-500 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-orange-600 transition"
+                      className="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-blue-600 transition"
                     >
                       Yes, use my chat context
                     </button>
@@ -1116,18 +1211,18 @@ export default function Itinerary() {
             )}
 
             {/* Messages */}
-            <div className="h-[52vh] sm:h-[56vh] overflow-y-auto px-4 py-5 sm:px-6 bg-gradient-to-b from-white to-orange-50/30">
+            <div className="h-[52vh] sm:h-[56vh] overflow-y-auto px-4 py-5 sm:px-6 bg-white">
               {messages.length === 0 ? (
                 <div className="mx-auto max-w-xl">
-                  <div className="rounded-2xl border border-orange-100 bg-orange-50/60 p-4">
-                    <p className="text-sm font-semibold text-orange-800">
+                  <div className="rounded-2xl border border-blue-100 bg-blue-50/60 p-4">
+                    <p className="text-sm font-semibold text-blue-800">
                       Start here
                     </p>
-                    <p className="mt-1 text-sm text-orange-900/80">
+                    <p className="mt-1 text-sm text-blue-900/80">
                       Tell me your dates, starting city, pace, and must-visit
                       places in Odisha.
                     </p>
-                    <p className="mt-2 text-xs text-orange-900/70">
+                    <p className="mt-2 text-xs text-blue-900/70">
                       Example: “3 days in Bhubaneswar–Puri with elderly parents,
                       early mornings, minimal walking.”
                     </p>
@@ -1148,7 +1243,7 @@ export default function Itinerary() {
                           className={
                             "max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 shadow-sm border " +
                             (isUser
-                              ? "bg-gradient-to-br from-orange-500 to-orange-600 text-white border-orange-500"
+                              ? "bg-blue-600 text-white border-blue-600"
                               : "bg-white text-gray-900 border-gray-200")
                           }
                         >
@@ -1173,7 +1268,7 @@ export default function Itinerary() {
                           <div
                             className={
                               "mt-2 text-[11px] " +
-                              (isUser ? "text-orange-50/90" : "text-gray-500")
+                              (isUser ? "text-blue-50/90" : "text-gray-500")
                             }
                           >
                             {formatTime(m.ts)}
@@ -1188,9 +1283,9 @@ export default function Itinerary() {
                       <div className="max-w-[92%] sm:max-w-[78%] rounded-2xl px-4 py-3 shadow-sm border border-gray-200 bg-white">
                         <p className="text-sm text-gray-600">Thinking…</p>
                         <div className="mt-2 flex gap-1">
-                          <span className="h-1.5 w-1.5 rounded-full bg-orange-300 animate-pulse" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-orange-300 animate-pulse" />
-                          <span className="h-1.5 w-1.5 rounded-full bg-orange-300 animate-pulse" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" />
+                          <span className="h-1.5 w-1.5 rounded-full bg-blue-300 animate-pulse" />
                         </div>
                       </div>
                     </div>
@@ -1227,7 +1322,7 @@ export default function Itinerary() {
                       }}
                       rows={1}
                       placeholder="Type your trip details…"
-                      className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-12 text-sm sm:text-base text-gray-800 shadow-inner focus:border-orange-400 focus:outline-none focus:ring-2 focus:ring-orange-100"
+                      className="w-full resize-none rounded-xl border border-gray-200 bg-gray-50 px-4 py-3 pr-12 text-sm sm:text-base text-gray-800 shadow-inner focus:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-100"
                       disabled={isRecording}
                     />
                     {/* Mic button inside textarea */}
@@ -1239,7 +1334,7 @@ export default function Itinerary() {
                         "absolute right-2 top-1/2 -translate-y-1/2 rounded-lg p-2 transition-all " +
                         (isRecording
                           ? "bg-red-500 text-white animate-pulse shadow-lg"
-                          : "bg-orange-100 text-orange-600 hover:bg-orange-200")
+                          : "bg-blue-100 text-blue-600 hover:bg-blue-200")
                       }
                       title={isRecording ? "Click to stop recording" : "Click to start voice input"}
                     >
@@ -1274,7 +1369,7 @@ export default function Itinerary() {
                         onClick={() =>
                           setPrompt((p) => (p ? `${p} ${tag}` : tag))
                         }
-                        className="rounded-full bg-orange-50 px-3 py-1 text-orange-700 border border-orange-100 hover:bg-orange-100"
+                        className="rounded-full bg-blue-50 px-3 py-1 text-blue-700 border border-blue-100 hover:bg-blue-100"
                       >
                         {tag}
                       </button>
@@ -1286,7 +1381,7 @@ export default function Itinerary() {
                   <button
                     type="submit"
                     disabled={loading || !prompt.trim()}
-                    className="inline-flex items-center justify-center rounded-xl bg-orange-500 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed"
+                    className="inline-flex items-center justify-center rounded-xl bg-blue-600 px-5 py-3 text-sm font-semibold text-white shadow-lg transition hover:-translate-y-0.5 hover:bg-blue-600 disabled:opacity-60 disabled:cursor-not-allowed"
                   >
                     {loading ? "Sending…" : "Send"}
                   </button>
@@ -1300,35 +1395,80 @@ export default function Itinerary() {
             </div>
           </div>
 
-          {/* Sample Output */}
-          <aside className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm">
-            <h2 className="text-base sm:text-lg font-semibold text-gray-900">
-              Sample itinerary preview
-            </h2>
-
-            <div className="mt-4 space-y-4 text-sm text-gray-700">
-              <div>
-                <p className="font-semibold text-orange-600">Day 1</p>
-                <ul className="mt-1 list-disc pl-5 space-y-1">
-                  <li>06:00 AM – Suprabhatam darshan</li>
-                  <li>08:00 AM – Breakfast near Padmavati Temple</li>
-                  <li>10:00 AM – Govindaraja Swamy Temple visit</li>
-                </ul>
-              </div>
-
-              <div>
-                <p className="font-semibold text-orange-600">Day 2</p>
-                <ul className="mt-1 list-disc pl-5 space-y-1">
-                  <li>Sunrise at Kapila Theertham</li>
-                  <li>Vegetarian lunch & rest</li>
-                  <li>Evening stroll at Papavinasanam</li>
-                </ul>
-              </div>
-
-              <div className="rounded-lg border border-dashed border-orange-200 bg-orange-50 p-3 text-xs sm:text-sm text-orange-800">
-                💡 Tip: Mention exact dates, mobility needs, and your starting
-                city for better recommendations.
-              </div>
+          {/* History Sidebar */}
+          <aside className="rounded-2xl border border-gray-200 bg-white p-5 sm:p-6 shadow-sm flex flex-col h-full max-h-[85vh]">
+            <div className="flex border-b border-gray-200 mb-4">
+              <button 
+                className={`flex-1 pb-3 px-2 text-sm font-semibold transition-colors ${historyTab === 'chat' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setHistoryTab('chat')}
+              >
+                Chat History
+              </button>
+              <button 
+                className={`flex-1 pb-3 px-2 text-sm font-semibold transition-colors ${historyTab === 'planner' ? 'border-b-2 border-blue-600 text-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                onClick={() => setHistoryTab('planner')}
+              >
+                Planner History
+              </button>
+            </div>
+            
+            <div className="flex-1 space-y-3 overflow-y-auto pr-2">
+              {historyTab === 'chat' && (
+                chatSessions.length > 0 ? (
+                  chatSessions.map(session => (
+                    <button
+                      key={session.id}
+                      onClick={() => loadChatSession(session.id)}
+                      className={`w-full text-left p-4 rounded-xl transition-all border ${
+                        chatId === session.id
+                          ? "bg-blue-50 border-blue-200 shadow-sm"
+                          : "bg-white border-gray-100 hover:bg-gray-50 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-1 gap-2">
+                        <p className={`font-semibold text-sm truncate flex-1 ${chatId === session.id ? "text-blue-700" : "text-gray-800"}`}>
+                          {session.title}
+                        </p>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        {new Date(session.updatedAt).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                      </p>
+                    </button>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-sm text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                    No recent chat history in this session.
+                  </div>
+                )
+              )}
+              {historyTab === 'planner' && (
+                plannerSessions.length > 0 ? (
+                  plannerSessions.map(session => (
+                    <button
+                      key={session.chat_id}
+                      onClick={() => loadPlannerSession(session.chat_id)}
+                      className={`w-full text-left p-4 rounded-xl transition-all border ${
+                        chatId === session.chat_id && mode === "planner"
+                          ? "bg-blue-50 border-blue-200 shadow-sm"
+                          : "bg-white border-gray-100 hover:bg-gray-50 hover:border-gray-300"
+                      }`}
+                    >
+                      <div className="flex justify-between items-start mb-1 gap-2">
+                        <p className={`font-semibold text-sm truncate flex-1 ${chatId === session.chat_id && mode === "planner" ? "text-blue-700" : "text-gray-800"}`}>
+                          {session.destination} ({session.trip_length_days > 0 ? `${session.trip_length_days} Days` : 'Planning'})
+                        </p>
+                      </div>
+                      <p className="text-xs text-gray-500">
+                        {new Date(session.updated_at || session.created_at).toLocaleString([], { dateStyle: 'short', timeStyle: 'short' })}
+                      </p>
+                    </button>
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-sm text-gray-500 bg-gray-50 rounded-xl border border-dashed border-gray-200">
+                    {userId === "guest" ? "Login to view planner history." : "No planner history found."}
+                  </div>
+                )
+              )}
             </div>
           </aside>
         </section>
