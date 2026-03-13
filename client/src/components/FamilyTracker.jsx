@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useAuth } from "../context/AuthContext";
 import FindMyDevice from "./FindMyDevice";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = ""; // Use relative paths so Vite proxy works on mobile (via ngrok)
 const FAMILY_POLL_INTERVAL_MS = 5000;
 const STALE_THRESHOLD_MS = 5 * 60 * 1000;
 

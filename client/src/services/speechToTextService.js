@@ -3,7 +3,7 @@
  * Handles audio recording and transcription using Sarvam AI
  */
 
-const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_BASE = ""; // Use relative paths so Vite proxy works on mobile (via ngrok)
 
 class SpeechToTextService {
   constructor() {

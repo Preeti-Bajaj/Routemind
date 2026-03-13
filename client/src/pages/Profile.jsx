@@ -1,6 +1,6 @@
 import { useAuth } from "../context/AuthContext";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = ""; // Use relative paths so Vite proxy works on mobile (via ngrok)
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 

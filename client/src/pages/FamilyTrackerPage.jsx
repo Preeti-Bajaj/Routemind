@@ -4,7 +4,7 @@ import FamilyTracker from "../components/FamilyTracker";
 import { NavbarDemo } from "../components/Navbar";
 import LanguageSelector from "../components/LanguageSelector";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = ""; // Use relative paths so Vite proxy works on mobile (via ngrok)
 
 const FamilyTrackerPage = () => {
   const { currentUser } = useAuth();

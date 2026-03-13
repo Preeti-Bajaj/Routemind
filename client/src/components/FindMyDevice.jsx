@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = ""; // Use relative paths so Vite proxy works on mobile (via ngrok)
 
 /**
  * Member Location View

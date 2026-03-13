@@ -3,6 +3,7 @@ import { useAuth } from './context/AuthContext';
 import { TranslationProvider } from './context/TranslationContext';
 import { VoiceNavigationProvider } from './context/VoiceNavigationContext';
 import PersistentVoiceButton from './components/PersistentVoiceButton';
+import { useLocationTracker } from './hooks/useLocationTracker';
 
 import Home from "./pages/Home";
 import MapPage from "./pages/MapPage";
@@ -26,6 +27,9 @@ const ProtectedRoute = ({ children }) => {
 };
 
 export default function App() {
+  // Automatically send user's location to backend every 5s when logged in
+  useLocationTracker();
+
   return (
     <TranslationProvider>
       <Router>

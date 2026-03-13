@@ -9,7 +9,7 @@ import {
 } from "firebase/auth";
 import { auth } from "../config/firebase";
 
-const API_BASE = import.meta.env.VITE_API_URL ?? "";
+const API_BASE = ""; // Use relative paths so Vite proxy works on mobile (via ngrok)
 
 // Create context
 const AuthContext = createContext(null);

@@ -1,6 +1,6 @@
 class VoiceNavigationService {
   constructor() {
-    this.baseURL = import.meta.env.VITE_BACKEND_URL || 'http://localhost:5000';
+    this.baseURL = ""; // Use relative paths so Vite proxy works on mobile (via ngrok)
     this.isListening = false;
     this.mediaRecorder = null;
     this.audioChunks = [];

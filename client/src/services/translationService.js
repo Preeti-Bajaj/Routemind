@@ -1,7 +1,7 @@
 // services/translationService.js
 class TranslationService {
   constructor() {
-    this.baseURL = 'http://localhost:5000/api/translate';
+    this.baseURL = '/api/translate';
     this.cache = new Map();
     this.requestQueue = [];
     this.pendingRequests = new Map(); // Track pending requests
